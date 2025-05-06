@@ -1,24 +1,33 @@
 name: yemenshop
-description: "A new Flutter project."
+description: "A Yemeni e-commerce application."
 publish_to: 'none'
 
 version: 1.0.0+1
-
 environment:
-  sdk: ^3.7.2
+  sdk: ">=3.2.2 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  animated_text_kit: ^4.2.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.3
 
 flutter:
   uses-material-design: true
-
   assets:
-    - "assets/images/ChatGPT Image Apr 30, 2025, 09_04_45 PM.png"
+    - assets/images/icon.png # your renamed icon
+  fonts:
+    - family: Rubik
+      fonts:
+        - asset: assets/fonts/Rubik-VariableFont_wght.ttf
+
+flutter_icons:
+  android: false
+  ios: true
+  image_path: "assets/images/icon.png"
