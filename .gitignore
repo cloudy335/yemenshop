@@ -43,3 +43,12 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+
+# Generated plugin registrants
+linux/flutter/generated_plugin_registrant.*
+macos/Flutter/GeneratedPluginRegistrant.*
+windows/flutter/generated_plugin_registrant.*
+
+# (Optional) Flutter SDK directory, if you ever added it by mistake
+development/flutter/
