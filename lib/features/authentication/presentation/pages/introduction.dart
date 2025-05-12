@@ -26,7 +26,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       subtitle: 'دفع إلكتروني آمن وتوصيل سريع',
     ),
     const _Data(
-      image: 'assets/images/Aden.png',
+      image: 'assets/images/clock.png',
       title: 'ادعم المنتج المحلي',
       subtitle: 'ساهم في دعم الحرفيين والحفاظ على التراث',
     ),
@@ -62,19 +62,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: 240,
-                            height: 240,
+                            width: 290,
+                            height: 290,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
+                              color: AppColors.background,
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(20),
                               child: Image.asset(
                                 slide.image,
-                                fit: BoxFit.cover,
-                                errorBuilder: (ctx, error, stack) => Container(
-                                  color: AppColors.primary.withOpacity(0.1),
-                                  child: const Icon(
+                                fit: BoxFit.contain,
+                                errorBuilder: (ctx, error, stack) => Center(
+                                  child: Icon(
                                     Icons.image_not_supported,
                                     color: AppColors.textOnPrimary,
                                     size: 50,
@@ -86,10 +86,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           const SizedBox(height: AppSpacing.xl),
                           Text(
                             slide.title,
-                            style: AppTextStyles.h2.copyWith(
+                            style: AppTextStyles.h1.copyWith(
                               color: AppColors.textPrimary,
-                              fontSize: 28,
+                              fontSize: 24,
                             ),
+                            textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: AppSpacing.md),
                           Padding(
@@ -100,7 +101,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               textAlign: TextAlign.center,
                               style: AppTextStyles.body1.copyWith(
                                 color: AppColors.textSecondary,
-                                fontSize: 16,
                               ),
                             ),
                           ),
@@ -116,16 +116,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(_data.length, (i) {
-                    final activeDotIndex = _data.length - 1 - _currentPage;
                     return AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
                       margin:
                           const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-                      width:
-                          i == activeDotIndex ? AppSpacing.lg : AppSpacing.md,
+                      width: i == _currentPage ? AppSpacing.lg : AppSpacing.md,
                       height: AppSpacing.sm,
                       decoration: BoxDecoration(
-                        color: i == activeDotIndex
+                        color: i == _currentPage
                             ? AppColors.primary
                             : AppColors.primary.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(10),
