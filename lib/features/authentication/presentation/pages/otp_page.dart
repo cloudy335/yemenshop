@@ -1,8 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:yemenshop/core/theme/design_system.dart';
 
-class OTPPageUI extends StatelessWidget {
-  const OTPPageUI({super.key});
+class OTPPageUI extends StatefulWidget {
+  const OTPPageUI({Key? key}) : super(key: key);
+
+  @override
+  State<OTPPageUI> createState() => _OTPPageUIState();
+}
+
+class _OTPPageUIState extends State<OTPPageUI> {
+  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
+  final List<TextEditingController> _controllers =
+      List.generate(6, (_) => TextEditingController());
+
+  @override
+  void dispose() {
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
+    for (var focusNode in _focusNodes) {
+      focusNode.dispose();
+    }
+    super.dispose();
+  }
+
+  void _handleInput(String value, int index) {
+    if (value.isNotEmpty && value.length == 1) {
+      if (index < 5) {
+        FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
+      } else {
+        _focusNodes[index].unfocus(); // Last field, remove focus
+      }
+    } else if (value.isEmpty && index > 0) {
+      FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +42,7 @@ class OTPPageUI extends StatelessWidget {
       backgroundColor: AppColors.surface,
       body: SafeArea(
         child: Directionality(
-          textDirection: TextDirection.rtl,
+          textDirection: TextDirection.ltr, // Change to LTR
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
             child: Column(
@@ -43,67 +75,54 @@ class OTPPageUI extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.lg),
 
-                // OTP Input Field
-                TextField(
-                  textAlign: TextAlign.center,
-                  keyboardType: TextInputType.number,
-                  maxLength: 6, // Assume 6-digit OTP
-                  style: const TextStyle(
-                    fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 20,
-                    letterSpacing: 4, // Add spacing between digits
-                    color: AppColors.textPrimary,
-                  ),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: AppColors.surface,
-                    counterText: '', // Hide character counter
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppRadius.normal),
-                      borderSide: const BorderSide(
-                        color: AppColors.textSecondary,
+                // OTP Input Fields
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(6, (index) {
+                    return Container(
+                      width: 40,
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      child: TextField(
+                        controller: _controllers[index],
+                        focusNode: _focusNodes[index],
+                        keyboardType: TextInputType.number,
+                        textAlign: TextAlign.center,
+                        maxLength: 1,
+                        style: const TextStyle(
+                          fontFamily: AppTextStyles.fontFamily,
+                          fontSize: 20,
+                          color: AppColors.textPrimary,
+                        ),
+                        decoration: InputDecoration(
+                          counterText: '',
+                          filled: true,
+                          fillColor: AppColors.surface,
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(AppRadius.normal),
+                            borderSide: const BorderSide(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ),
+                        onChanged: (value) => _handleInput(value, index),
                       ),
-                    ),
-                    hintText: '••••••',
-                    hintStyle: const TextStyle(
-                      fontFamily: AppTextStyles.fontFamily,
-                      color: AppColors.textSecondary,
-                      fontSize: 20,
-                      letterSpacing: 4,
-                    ),
-                  ),
+                    );
+                  }),
                 ),
 
-                const SizedBox(height: AppSpacing.lg),
+                const SizedBox(height: 80),
 
                 // Resend Code
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      // Logic to resend the code
-                    },
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: AppSpacing.sm,
-                        vertical: AppSpacing.sm,
-                      ),
-                    ),
-                    child: const Text(
-                      'إعادة إرسال الرمز؟',
-                      style: AppTextStyles.caption,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: AppSpacing.lg),
 
                 // Verify Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Logic to verify the OTP
+                      // Collect OTP
+                      final otp = _controllers.map((c) => c.text).join();
+                      print('Entered OTP: $otp');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
@@ -124,6 +143,18 @@ class OTPPageUI extends StatelessWidget {
                     ),
                   ),
                 ),
+                Align(
+                  alignment: Alignment.center, // Center the button
+                  child: TextButton(
+                    onPressed: () {
+                      // Logic to resend the code
+                    },
+                    child: const Text(
+                      'إعادة إرسال الرمز؟',
+                      style: AppTextStyles.caption,
+                    ),
+                  ),
+                )
               ],
             ),
           ),
