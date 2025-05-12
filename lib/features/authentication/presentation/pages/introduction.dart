@@ -1,4 +1,3 @@
-// lib/features/introduction/presentation/introduction_screen.dart
 import 'package:flutter/material.dart';
 import 'package:yemenshop/core/theme/design_system.dart';
 import 'package:yemenshop/core/theme/app_button.dart';
@@ -17,17 +16,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<_Data> _data = [
     const _Data(
-      image: 'assets/images/oldSanaa.jpg',
+      image: 'assets/images/oldSanaa.png',
       title: 'اكتشف المنتجات اليمنية الأصيلة',
       subtitle: 'تصفح تشكيلتنا اليدوية والقهوة المميزة',
     ),
     const _Data(
-      image: 'assets/images/treeblood.jpg',
+      image: 'assets/images/treebloood.png',
       title: 'تسوق بسهولة وأمان',
       subtitle: 'دفع إلكتروني آمن وتوصيل سريع',
     ),
     const _Data(
-      image: 'assets/images/Aden.jpg',
+      image: 'assets/images/Aden.png',
       title: 'ادعم المنتج المحلي',
       subtitle: 'ساهم في دعم الحرفيين والحفاظ على التراث',
     ),
@@ -62,41 +61,47 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Semantics(
-                            label: 'صورة توضيحية لـ${slide.title}',
-                            child: ClipOval(
-                              child: SizedBox(
-                                width: AppSpacing.xl * 5,
-                                height: AppSpacing.xl * 5,
-                                child: Image.asset(
-                                  slide.image,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (ctx, error, stack) =>
-                                      Container(
-                                    color: AppColors.secondary.withOpacity(0.1),
-                                    child: const Icon(
-                                      Icons.error,
-                                      color: AppColors.textOnPrimary,
-                                    ),
+                          Container(
+                            width: 240,
+                            height: 240,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Image.asset(
+                                slide.image,
+                                fit: BoxFit.cover,
+                                errorBuilder: (ctx, error, stack) => Container(
+                                  color: AppColors.primary.withOpacity(0.1),
+                                  child: const Icon(
+                                    Icons.image_not_supported,
+                                    color: AppColors.textOnPrimary,
+                                    size: 50,
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                          SizedBox(height: AppSpacing.lg),
+                          const SizedBox(height: AppSpacing.xl),
                           Text(
                             slide.title,
-                            textAlign: TextAlign.center,
                             style: AppTextStyles.h2.copyWith(
-                              color: AppColors.secondary,
+                              color: AppColors.textPrimary,
+                              fontSize: 28,
                             ),
                           ),
-                          SizedBox(height: AppSpacing.md),
-                          Text(
-                            slide.subtitle,
-                            textAlign: TextAlign.center,
-                            style: AppTextStyles.body1.copyWith(
-                              color: Colors.black87,
+                          const SizedBox(height: AppSpacing.md),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.lg),
+                            child: Text(
+                              slide.subtitle,
+                              textAlign: TextAlign.center,
+                              style: AppTextStyles.body1.copyWith(
+                                color: AppColors.textSecondary,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
                         ],
@@ -105,32 +110,31 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   },
                 ),
               ),
-              SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.xl),
               Directionality(
                 textDirection: TextDirection.ltr,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(_data.length, (i) {
-                    final bool isActive = i == _currentPage;
+                    final activeDotIndex = _data.length - 1 - _currentPage;
                     return AnimatedContainer(
-                      duration: const Duration(milliseconds: 250),
+                      duration: const Duration(milliseconds: 300),
                       margin:
                           const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-                      width: isActive
-                          ? AppSpacing.lg
-                          : AppSpacing.sm + AppSpacing.xs,
+                      width:
+                          i == activeDotIndex ? AppSpacing.lg : AppSpacing.md,
                       height: AppSpacing.sm,
                       decoration: BoxDecoration(
-                        color: isActive
-                            ? AppColors.secondary
-                            : AppColors.secondary.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(AppRadius.small),
+                        color: i == activeDotIndex
+                            ? AppColors.primary
+                            : AppColors.primary.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     );
                   }),
                 ),
               ),
-              SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.xl),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
                 child: AppButton(
@@ -138,13 +142,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       _currentPage < _data.length - 1 ? 'التالي' : 'ابدأ الآن',
                   onPressed: _currentPage < _data.length - 1
                       ? () => _pageController.nextPage(
-                            duration: const Duration(milliseconds: 400),
-                            curve: Curves.easeOut,
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.easeInOut,
                           )
                       : _goHome,
+                  backgroundColor: AppColors.primary,
                 ),
               ),
-              SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.lg),
             ],
           ),
         ),
