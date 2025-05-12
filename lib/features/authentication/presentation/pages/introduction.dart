@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:yemenshop/core/theme/design_system.dart';
 import 'package:yemenshop/core/theme/app_button.dart';
-import 'package:yemenshop/features/authentication/presentation/pages/createLogin_page.dart';
+import 'package:yemenshop/features/authentication/presentation/pages/create_login_page.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({Key? key}) : super(key: key);

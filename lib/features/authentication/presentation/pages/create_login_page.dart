@@ -1,51 +1,51 @@
 // lib/features/authentication/presentation/pages/login_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:yemenshop/routes.dart';
+import 'package:yemenshop/core/theme/design_system.dart';
+import 'package:yemenshop/core/theme/app_button.dart';
 
 class CreateLoginPageUI extends StatelessWidget {
-  const CreateLoginPageUI({super.key});
+  const CreateLoginPageUI({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5E8D7),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 140),
+              SizedBox(height: AppSpacing.xl * 4),
 
               // Logo
               Image.asset(
                 'assets/images/Logo.png',
-                width: 250,
-                height: 250,
+                width: AppSpacing.xl * 7,
+                height: AppSpacing.xl * 7,
+                fit: BoxFit.contain,
               ),
 
-              // Title immediately under the logo
-              const Text(
+              SizedBox(height: AppSpacing.lg),
+
+              // Title
+              Text(
                 'المتجر اليمني',
-                style: TextStyle(
-                  fontFamily: 'Rubik',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 28,
-                  color: Color(0xFF6C2F17),
-                ),
+                textAlign: TextAlign.center,
+                style: AppTextStyles.h1.copyWith(color: AppColors.secondary),
               ),
-              const SizedBox(height: 170),
 
-              // Description
-              const Text(
-                'انطلق في رحلة الذوق اليمني مع المتجر اليمني أول تطبيق في السعودية يجمع أفضل وأشهر المنتجات اليمنية الأصيلة مثل العسل الفاخر والبُن المختار ',
+              SizedBox(height: AppSpacing.xl * 5),
+
+              // Description with line spacing
+              Text(
+                'انطلق في رحلة الذوق اليمني مع المتجر اليمني أول تطبيق في السعودية يجمع أفضل وأشهر المنتجات اليمنية الأصيلة مثل العسل الفاخر والبُن المختار',
                 textAlign: TextAlign.right,
-                style: TextStyle(
-                  fontFamily: 'Rubik',
-                  fontSize: 14.5,
-                  color: Color(0xFF6C2F17),
-                  height: 1.8, // line-height for multi-line spacing
-                  wordSpacing: 1.9,
+                style: AppTextStyles.body1.copyWith(
+                  color: AppColors.textPrimary,
+                  height: 2.5,
+                  wordSpacing: 1.5,
                 ),
               ),
 
@@ -54,55 +54,30 @@ class CreateLoginPageUI extends StatelessWidget {
               // Buttons Row
               Row(
                 children: [
+                  // Primary button with custom color
                   Expanded(
-                    child: ElevatedButton(
+                    child: AppButton(
+                      label: 'تسجيل الدخول',
+                      backgroundColor: Colors.black, // New color
                       onPressed: () {
                         Navigator.pushNamed(context, AppRoutes.login);
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF6C2F17),
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
-                      child: const Text(
-                        'تسجيل الدخول',
-                        style: TextStyle(
-                          fontFamily: 'Rubik',
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: AppSpacing.lg),
+                  // Secondary button with default color
                   Expanded(
-                    child: ElevatedButton(
+                    child: AppButton(
+                      label: 'انشاء حساب',
                       onPressed: () {
-                        // TODO: navigate to registration form
+                        Navigator.pushNamed(context, AppRoutes.login);
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
-                      child: const Text(
-                        'إنشاء حساب',
-                        style: TextStyle(
-                          fontFamily: 'Rubik',
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF6C2F17),
-                        ),
-                      ),
                     ),
                   ),
                 ],
               ),
 
-              const SizedBox(height: 24),
+              SizedBox(height: AppSpacing.lg),
             ],
           ),
         ),

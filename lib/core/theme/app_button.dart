@@ -8,22 +8,25 @@ import 'design_system.dart';
 class AppButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
+  final Color? backgroundColor;
 
   const AppButton({
     Key? key,
     required this.label,
     required this.onPressed,
+    this.backgroundColor, // Optional parameter
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Unified text style for both platforms
     final TextStyle textStyle = TextStyle(
       fontFamily: 'Rubik',
       color: AppColors.textOnPrimary,
-      fontWeight: Platform.isIOS ? FontWeight.w500 : FontWeight.w600,
-      fontSize: Platform.isIOS ? 17 : 16,
+      fontWeight: Platform.isIOS ? FontWeight.w400 : FontWeight.w400,
+      fontSize: Platform.isIOS ? 15 : 14,
     );
+
+    final Color buttonColor = backgroundColor ?? AppColors.primary;
 
     if (Platform.isIOS) {
       return SizedBox(
@@ -31,8 +34,9 @@ class AppButton extends StatelessWidget {
         width: double.infinity,
         child: CupertinoButton(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-          borderRadius: BorderRadius.circular(AppRadius.normal),
-          color: AppColors.primary,
+          borderRadius:
+              BorderRadius.circular(AppRadius.normal), // Adjusted radius
+          color: buttonColor,
           onPressed: onPressed,
           child: Text(
             label,
@@ -42,16 +46,17 @@ class AppButton extends StatelessWidget {
       );
     } else {
       return SizedBox(
-        height: 48,
+        height: 56,
         width: double.infinity,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
+            backgroundColor: buttonColor,
             foregroundColor: AppColors.textOnPrimary,
             minimumSize: const Size(double.infinity, 48),
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadius.normal),
+              borderRadius:
+                  BorderRadius.circular(AppRadius.normal), // Adjusted radius
             ),
             textStyle: textStyle,
           ),

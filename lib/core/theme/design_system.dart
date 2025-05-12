@@ -8,7 +8,7 @@ class AppColors {
   // Primary brand color (icons & buttons)
   static const Color primary = Color(0xFFD3A270);
   // Secondary brand color (e.g., accents)
-  static const Color secondary = Color(0xFF3D281B);
+  static const Color secondary = Colors.black;
 
   // Feedback colors
   static const Color success = Color(0xFF4CAF50);
@@ -34,11 +34,15 @@ class AppSpacing {
   static const double xl = 32.0;
 }
 
-/// Corner radii
+/// Corner radii for a more modern, rounded look
 class AppRadius {
-  static const double small = 4.0;
-  static const double normal = 12.0;
-  static const double large = 24.0;
+  static const double small = 8.0; // A smaller radius for minor rounding
+  static const double normal =
+      16.0; // Standard radius for buttons and cards (previously 12.0)
+  static const double large =
+      32.0; // Larger radius for more noticeable rounding
+  static const double extraLarge =
+      48.0; // For high-impact design elements (optional)
 }
 
 /// Elevation (shadow) levels
@@ -55,7 +59,7 @@ class AppTextStyles {
 
   static const TextStyle h1 = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: FontWeight.bold,
     height: 1.25,
     color: AppColors.textPrimary,
@@ -71,7 +75,7 @@ class AppTextStyles {
 
   static const TextStyle body1 = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: FontWeight.normal,
     height: 1.5,
     color: AppColors.textPrimary,
@@ -102,7 +106,7 @@ class AppButtonStyles {
     minimumSize: const Size(double.infinity, 48),
     padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(AppRadius.normal),
+      borderRadius: BorderRadius.circular(AppRadius.normal), // Adjusted radius
     ),
     textStyle: const TextStyle(
       fontFamily: AppTextStyles.fontFamily,
@@ -117,7 +121,7 @@ class AppButtonStyles {
     minimumSize: const Size(double.infinity, 48),
     padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(AppRadius.normal),
+      borderRadius: BorderRadius.circular(AppRadius.normal), // Adjusted radius
     ),
     textStyle: const TextStyle(
       fontFamily: AppTextStyles.fontFamily,
@@ -150,7 +154,7 @@ class AppInputStyles {
         hintText: hint,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
-          vertical: AppSpacing.sm,
+          vertical: AppSpacing.md,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.small),
