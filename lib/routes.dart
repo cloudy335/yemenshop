@@ -29,7 +29,7 @@ class AppRoutes {
         );
       case otp:
         return MaterialPageRoute(
-          builder: (_) => const OTPPageUI(), // Link to the OTP page
+          builder: (_) => OTPPageUI(), // Link to the OTP page
           fullscreenDialog: true,
         );
       default:
