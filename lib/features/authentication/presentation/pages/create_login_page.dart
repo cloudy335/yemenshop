@@ -70,7 +70,7 @@ class CreateLoginPageUI extends StatelessWidget {
                     child: AppButton(
                       label: 'انشاء حساب',
                       onPressed: () {
-                        Navigator.pushNamed(context, AppRoutes.login);
+                        Navigator.pushNamed(context, AppRoutes.createAccount);
                       },
                     ),
                   ),
