@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yemenshop/core/theme/design_system.dart';
+import 'package:yemenshop/routes.dart';
 
 class LoginPageUI extends StatelessWidget {
   const LoginPageUI({super.key});
@@ -105,7 +106,9 @@ class LoginPageUI extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, AppRoutes.resetPassword);
+                    },
                     style: TextButton.styleFrom(
                       padding: EdgeInsets.symmetric(
                           horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
