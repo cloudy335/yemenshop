@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/create_login_page.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/login_page.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/create_account_page.dart'; // Import the create account page
-import 'package:yemenshop/features/authentication/presentation/pages/otp_page.dart'; // Import the OTP page
+import 'package:yemenshop/features/authentication/presentation/pages/otp_page.dart';
+import 'package:yemenshop/features/authentication/presentation/pages/reset_password.dart'; // Import the OTP page
 
 class AppRoutes {
   static const String createLogin = '/';
   static const String login = '/login';
-  static const String createAccount =
-      '/create-account'; // Add create account route
-  static const String otp = '/otp'; // Add OTP route
+  static const String createAccount = '/create-account';
+  static const String otp = '/otp';
+  static const String resetPassword = '/reset-password'; // New route
 
   static Route<dynamic> generate(RouteSettings settings) {
     switch (settings.name) {
@@ -29,8 +30,12 @@ class AppRoutes {
         );
       case otp:
         return MaterialPageRoute(
-          builder: (_) => OTPPageUI(), // Link to the OTP page
+          builder: (_) => OTPPageUI(),
           fullscreenDialog: true,
+        );
+      case resetPassword: // Handle the forgot password route
+        return MaterialPageRoute(
+          builder: (_) => const ResetPasswordScreen(),
         );
       default:
         return MaterialPageRoute(
