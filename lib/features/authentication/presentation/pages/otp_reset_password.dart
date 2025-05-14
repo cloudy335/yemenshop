@@ -3,7 +3,6 @@ import 'package:yemenshop/core/theme/design_system.dart';
 
 class OTPVerificationScreen extends StatelessWidget {
   const OTPVerificationScreen({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,24 +20,19 @@ class OTPVerificationScreen extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: AppSpacing.xl * 2.5),
-
                 // Title
                 const Text(
                   'تحقق من الرمز',
                   style: AppTextStyles.h2,
                 ),
-
                 const SizedBox(height: AppSpacing.md),
-
                 // Subtitle
                 const Text(
                   'يرجى إدخال رمز التحقق الذي تم إرساله إلى بريدك الإلكتروني.',
                   style: AppTextStyles.body2,
                   textAlign: TextAlign.center,
                 ),
-
                 const SizedBox(height: AppSpacing.xl),
-
                 // OTP Fields
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

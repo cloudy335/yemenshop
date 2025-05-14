@@ -8,15 +8,25 @@ class CreateAccountPageUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surface, // White background
+      backgroundColor: AppColors.surface,
+      appBar: AppBar(
+        backgroundColor: AppColors.surface,
+        elevation: 0,
+        automaticallyImplyLeading:
+            true, // Shows back button if there's a previous route
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: SafeArea(
         child: Directionality(
-          textDirection: TextDirection.rtl, // Apply RTL globally
+          textDirection: TextDirection.rtl,
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
             child: Column(
               children: [
-                const SizedBox(height: AppSpacing.xl * 2.5),
+                const SizedBox(height: AppSpacing.xl),
 
                 // Logo
                 Image.asset(
@@ -37,7 +47,7 @@ class CreateAccountPageUI extends StatelessWidget {
 
                 // Phone Field
                 TextField(
-                  textAlign: TextAlign.right, // Align text to the right
+                  textAlign: TextAlign.right,
                   textAlignVertical: TextAlignVertical.center,
                   keyboardType: TextInputType.phone,
                   style: const TextStyle(
@@ -63,7 +73,7 @@ class CreateAccountPageUI extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: AppSpacing.lg), // Space between fields
+                const SizedBox(height: AppSpacing.lg),
 
                 // Create Password Field
                 TextField(
@@ -93,7 +103,7 @@ class CreateAccountPageUI extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: AppSpacing.lg), // Space between fields
+                const SizedBox(height: AppSpacing.lg),
 
                 // Confirm Password Field
                 TextField(
@@ -123,17 +133,21 @@ class CreateAccountPageUI extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 70), // Space before the button
+                const SizedBox(height: 70),
 
                 // Create Account button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
+<<<<<<< HEAD
                       Navigator.pushNamed(
                           context,
                           AppRoutes
                               .otpRegistration); // Navigate to the OTP page
+=======
+                      Navigator.pushNamed(context, AppRoutes.otp);
+>>>>>>> 10e2688e7fbf6bc047afa31881babde0eab9db32
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
@@ -155,15 +169,14 @@ class CreateAccountPageUI extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: AppSpacing.sm), // Space below the button
+                const SizedBox(height: AppSpacing.sm),
 
                 // Navigate to Login Page
                 Align(
                   alignment: Alignment.center,
                   child: TextButton(
                     onPressed: () {
-                      // Navigate back to the login screen
-                      Navigator.pushNamed(context, '/login');
+                      Navigator.pushReplacementNamed(context, '/login');
                     },
                     style: TextButton.styleFrom(
                       padding: EdgeInsets.symmetric(

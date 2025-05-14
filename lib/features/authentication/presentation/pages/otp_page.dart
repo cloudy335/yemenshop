@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yemenshop/core/theme/design_system.dart';
+import 'package:yemenshop/features/authentication/presentation/pages/complete_prfile.dart';
 
 class OTPPageUI extends StatefulWidget {
   const OTPPageUI({Key? key}) : super(key: key);
@@ -113,8 +114,6 @@ class _OTPPageUIState extends State<OTPPageUI> {
 
                 const SizedBox(height: 80),
 
-                // Resend Code
-
                 // Verify Button
                 SizedBox(
                   width: double.infinity,
@@ -123,6 +122,13 @@ class _OTPPageUIState extends State<OTPPageUI> {
                       // Collect OTP
                       final otp = _controllers.map((c) => c.text).join();
                       print('Entered OTP: $otp');
+
+                      // Navigate to Complete Profile Page
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CompleteProfilePage()),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
@@ -143,8 +149,12 @@ class _OTPPageUIState extends State<OTPPageUI> {
                     ),
                   ),
                 ),
+
+                const SizedBox(height: AppSpacing.md),
+
+                // Resend Code
                 Align(
-                  alignment: Alignment.center, // Center the button
+                  alignment: Alignment.center,
                   child: TextButton(
                     onPressed: () {
                       // Logic to resend the code
@@ -154,7 +164,7 @@ class _OTPPageUIState extends State<OTPPageUI> {
                       style: AppTextStyles.caption,
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
