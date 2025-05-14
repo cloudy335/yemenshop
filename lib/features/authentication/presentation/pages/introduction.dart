@@ -13,6 +13,7 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  double _currentPageValue = 0.0;
 
   final List<_Data> _data = [
     const _Data(
@@ -32,10 +33,26 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     ),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(() {
+      setState(() {
+        _currentPageValue = _pageController.page!;
+      });
+    });
+  }
+
   void _goHome() {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (_) => const CreateLoginPageUI()),
     );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -51,8 +68,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 child: PageView.builder(
                   controller: _pageController,
                   itemCount: _data.length,
-                  onPageChanged: (index) =>
-                      setState(() => _currentPage = index),
+                  onPageChanged: (index) {
+                    setState(() {
+                      _currentPage = index;
+                    });
+                  },
                   itemBuilder: (context, index) {
                     final slide = _data[index];
                     return Padding(
@@ -112,20 +132,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               const SizedBox(height: AppSpacing.xl),
               Directionality(
-                textDirection: TextDirection.ltr,
+                textDirection: TextDirection.rtl,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(_data.length, (i) {
+                    final distance = (i - _currentPageValue).abs();
+                    final scale = 1.0 - distance.clamp(0.0, 1.0);
+
                     return AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
                       margin:
                           const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-                      width: i == _currentPage ? AppSpacing.lg : AppSpacing.md,
+                      width: 8.0 + 4.0 * scale,
                       height: AppSpacing.sm,
                       decoration: BoxDecoration(
-                        color: i == _currentPage
-                            ? AppColors.primary
-                            : AppColors.primary.withOpacity(0.2),
+                        color: Color.lerp(
+                          AppColors.primary.withOpacity(0.2),
+                          AppColors.primary,
+                          scale,
+                        ),
                         borderRadius: BorderRadius.circular(10),
                       ),
                     );
