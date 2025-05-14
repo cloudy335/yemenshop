@@ -42,7 +42,7 @@ class CreateLoginPageUI extends StatelessWidget {
               Text(
                 'انطلق في رحلة الذوق اليمني مع المتجر اليمني أول تطبيق في السعودية يجمع أفضل وأشهر المنتجات اليمنية الأصيلة مثل العسل الفاخر والبُن المختار',
                 textAlign: TextAlign.right,
-                style: AppTextStyles.body1.copyWith(
+                style: AppTextStyles.body2.copyWith(
                   color: AppColors.textPrimary,
                   height: 2.5,
                   wordSpacing: 1.5,
