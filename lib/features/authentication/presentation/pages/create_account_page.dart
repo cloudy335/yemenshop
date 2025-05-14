@@ -131,7 +131,9 @@ class CreateAccountPageUI extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.pushNamed(
-                          context, AppRoutes.otp); // Navigate to the OTP page
+                          context,
+                          AppRoutes
+                              .otpRegistration); // Navigate to the OTP page
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
