@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/create_login_page.dart';
+import 'package:yemenshop/features/authentication/presentation/pages/home_screen_page.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/login_page.dart';
-import 'package:yemenshop/features/authentication/presentation/pages/create_account_page.dart'; // Import the create account page
+import 'package:yemenshop/features/authentication/presentation/pages/create_account_page.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/otp_page.dart';
-import 'package:yemenshop/features/authentication/presentation/pages/reset_password.dart'; // Import the OTP page
+import 'package:yemenshop/features/authentication/presentation/pages/otp_reset_password.dart';
+import 'package:yemenshop/features/authentication/presentation/pages/reset_password.dart';
 
 class AppRoutes {
   static const String createLogin = '/';
   static const String login = '/login';
   static const String createAccount = '/create-account';
-  static const String otp = '/otp';
-  static const String resetPassword = '/reset-password'; // New route
+  static const String otpRegistration = '/otp-page'; // For registration OTP
+  static const String otpReset = '/otp-reset'; // For reset OTP
+  static const String resetPassword = '/reset-password';
+  static const String home = '/home'; // New home route
 
   static Route<dynamic> generate(RouteSettings settings) {
     switch (settings.name) {
@@ -28,14 +32,23 @@ class AppRoutes {
           builder: (_) => const CreateAccountPageUI(),
           fullscreenDialog: true,
         );
-      case otp:
+      case otpRegistration: // Registration OTP Page
         return MaterialPageRoute(
           builder: (_) => OTPPageUI(),
           fullscreenDialog: true,
         );
-      case resetPassword: // Handle the forgot password route
+      case otpReset: // Reset Password OTP Page
+        return MaterialPageRoute(
+          builder: (_) => OTPVerificationScreen(),
+          fullscreenDialog: true,
+        );
+      case resetPassword: // Reset Password Page
         return MaterialPageRoute(
           builder: (_) => const ResetPasswordScreen(),
+        );
+      case home: // Home Page
+        return MaterialPageRoute(
+          builder: (_) => YemenShopHomeScreen(),
         );
       default:
         return MaterialPageRoute(

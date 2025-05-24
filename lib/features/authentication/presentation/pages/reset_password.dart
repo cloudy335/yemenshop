@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yemenshop/core/theme/design_system.dart';
+import 'package:yemenshop/routes.dart'; // Import routes
 
 class ResetPasswordScreen extends StatelessWidget {
   const ResetPasswordScreen({Key? key}) : super(key: key);
@@ -38,11 +39,11 @@ class ResetPasswordScreen extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.xl),
 
-                // Email Field
+                // Phone Number Field
                 TextField(
                   textAlign: TextAlign.right,
                   textAlignVertical: TextAlignVertical.center,
-                  keyboardType: TextInputType.emailAddress,
+                  keyboardType: TextInputType.phone,
                   style: const TextStyle(
                     fontFamily: AppTextStyles.fontFamily,
                     fontSize: 14,
@@ -67,16 +68,15 @@ class ResetPasswordScreen extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(
-                  height: 80,
-                ),
+                const SizedBox(height: 80),
 
                 // Reset Password Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Implement the reset password logic
+                      // Navigate to OTP Verification Screen using routes
+                      Navigator.pushNamed(context, AppRoutes.otpReset);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,

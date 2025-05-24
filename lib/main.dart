@@ -1,5 +1,3 @@
-// lib/main.dart
-
 import 'package:flutter/material.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/splash_page.dart';
 import 'package:yemenshop/routes.dart';
