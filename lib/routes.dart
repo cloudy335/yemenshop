@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/create_login_page.dart';
+import 'package:yemenshop/features/authentication/presentation/pages/home_screen_page.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/login_page.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/create_account_page.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/otp_page.dart';
@@ -13,6 +14,7 @@ class AppRoutes {
   static const String otpRegistration = '/otp-page'; // For registration OTP
   static const String otpReset = '/otp-reset'; // For reset OTP
   static const String resetPassword = '/reset-password';
+  static const String home = '/home'; // New home route
 
   static Route<dynamic> generate(RouteSettings settings) {
     switch (settings.name) {
@@ -43,6 +45,10 @@ class AppRoutes {
       case resetPassword: // Reset Password Page
         return MaterialPageRoute(
           builder: (_) => const ResetPasswordScreen(),
+        );
+      case home: // Home Page
+        return MaterialPageRoute(
+          builder: (_) => YemenShopHomeScreen(),
         );
       default:
         return MaterialPageRoute(
