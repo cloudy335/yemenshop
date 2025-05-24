@@ -67,7 +67,7 @@ class AppTextStyles {
 
   static const TextStyle h2 = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: FontWeight.w600,
     height: 1.3,
     color: AppColors.textPrimary,

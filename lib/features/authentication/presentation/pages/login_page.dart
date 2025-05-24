@@ -128,7 +128,9 @@ class LoginPageUI extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, AppRoutes.home);
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor:
                           AppColors.primary, // Icon color for button
