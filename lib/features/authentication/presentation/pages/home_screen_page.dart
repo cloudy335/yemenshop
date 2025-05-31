@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:yemenshop/core/theme/design_system.dart' as design;
 import 'package:yemenshop/core/theme/design_system.dart';
+import 'package:yemenshop/features/authentication/presentation/pages/cart_page.dart';
 
 class YemenShopHomeScreen extends StatefulWidget {
   const YemenShopHomeScreen({Key? key}) : super(key: key);
@@ -63,23 +65,42 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
   }
 
   void _onNavBarTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    // You can replace this with actual screen navigation logic
+    if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CartScreenUI(
+            items: const [],
+            subTotal: 0.0,
+            deliveryFee: 0.0,
+            discount: 0.0,
+            totalCost: 0.0,
+            onQuantityChanged: (item, quantity) {},
+            onRemoveItem: (item) {},
+            onUndoRemove: (item) {},
+            onApplyPromoCode: (code) {},
+            onCheckout: () {},
+          ),
+        ),
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
     print("Tapped navigation item: $index");
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: design.AppColors.surface,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
-        elevation: AppElevation.none,
+        backgroundColor: design.AppColors.surface,
+        elevation: design.AppElevation.none,
         leading: IconButton(
-          icon: const Icon(Icons.notifications, color: AppColors.textSecondary),
+          icon: const Icon(Icons.notifications,
+              color: design.AppColors.textSecondary),
           onPressed: () {},
         ),
         title: Row(
@@ -88,22 +109,24 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
               child: Container(
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  border: Border.all(color: AppColors.textSecondary, width: 1),
-                  borderRadius: BorderRadius.circular(AppRadius.normal),
+                  color: design.AppColors.surface,
+                  border: Border.all(
+                      color: design.AppColors.textSecondary, width: 1),
+                  borderRadius: BorderRadius.circular(design.AppRadius.normal),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: design.AppSpacing.sm),
                 child: Row(
                   textDirection: TextDirection.rtl,
                   children: const [
-                    Icon(Icons.search, color: AppColors.textSecondary),
-                    SizedBox(width: AppSpacing.sm),
-                    Text('ابحث ', style: AppTextStyles.body2),
+                    Icon(Icons.search, color: design.AppColors.textSecondary),
+                    SizedBox(width: design.AppSpacing.sm),
+                    Text('ابحث ', style: design.AppTextStyles.body2),
                   ],
                 ),
               ),
             ),
-            const SizedBox(width: AppSpacing.md),
+            SizedBox(width: design.AppSpacing.md),
             Image.asset("assets/images/Logo.png", width: 50, height: 50),
           ],
         ),
@@ -120,17 +143,17 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
           currentIndex: _selectedIndex,
           onTap: _onNavBarTapped,
           type: BottomNavigationBarType.fixed,
-          backgroundColor: AppColors.surface,
-          selectedItemColor: AppColors.primary,
-          unselectedItemColor: AppColors.textSecondary,
-          selectedLabelStyle: AppTextStyles.body2
-              .copyWith(color: AppColors.primary, fontSize: 12),
-          unselectedLabelStyle: AppTextStyles.body1
-              .copyWith(color: AppColors.textSecondary, fontSize: 10),
+          backgroundColor: design.AppColors.surface,
+          selectedItemColor: design.AppColors.primary,
+          unselectedItemColor: design.AppColors.textSecondary,
+          selectedLabelStyle: design.AppTextStyles.body2
+              .copyWith(color: design.AppColors.primary, fontSize: 12),
+          unselectedLabelStyle: design.AppTextStyles.body1
+              .copyWith(color: design.AppColors.textSecondary, fontSize: 10),
           selectedIconTheme:
-              const IconThemeData(size: 30, color: AppColors.primary),
-          unselectedIconTheme:
-              const IconThemeData(size: 28, color: AppColors.textSecondary),
+              const IconThemeData(size: 30, color: design.AppColors.primary),
+          unselectedIconTheme: const IconThemeData(
+              size: 28, color: design.AppColors.textSecondary),
           items: const [
             BottomNavigationBarItem(
               icon: Icon(HugeIcons.strokeRoundedUser02),
@@ -164,7 +187,7 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
       textDirection: TextDirection.rtl,
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.md),
+          padding: const EdgeInsets.all(design.AppSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -180,20 +203,21 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
                     return Container(
                       margin: const EdgeInsets.symmetric(horizontal: 8),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(AppRadius.normal),
+                        borderRadius:
+                            BorderRadius.circular(design.AppRadius.normal),
                         image: DecorationImage(
                           image: AssetImage(promo['image']!),
                           fit: BoxFit.cover,
                         ),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(AppSpacing.md),
+                        padding: EdgeInsets.all(design.AppSpacing.md),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               promo['title']!,
-                              style: AppTextStyles.h2.copyWith(
+                              style: design.AppTextStyles.h2.copyWith(
                                 color: Colors.white,
                                 shadows: [
                                   Shadow(
@@ -204,10 +228,10 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
                                 ],
                               ),
                             ),
-                            const SizedBox(height: AppSpacing.sm),
+                            SizedBox(height: design.AppSpacing.sm),
                             Text(
                               promo['subtitle']!,
-                              style: AppTextStyles.body1.copyWith(
+                              style: design.AppTextStyles.body1.copyWith(
                                 color: Colors.white,
                                 shadows: [
                                   Shadow(
@@ -231,9 +255,9 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
                 ),
               ),
 
-              const SizedBox(height: AppSpacing.md),
-              const Text('الفئات', style: AppTextStyles.h2),
-              const SizedBox(height: AppSpacing.md),
+              const SizedBox(height: design.AppSpacing.md),
+              const Text('الفئات', style: design.AppTextStyles.h2),
+              const SizedBox(height: design.AppSpacing.md),
               SizedBox(
                 height: 110,
                 child: ListView(
@@ -241,27 +265,28 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
                   children: [
                     _buildCategoryCard(
                         'عسل يمني', HugeIcons.strokeRoundedHoney01),
-                    const SizedBox(width: AppSpacing.sm),
+                    const SizedBox(width: design.AppSpacing.sm),
                     _buildCategoryCard('قهوة', HugeIcons.strokeRoundedCoffee01),
-                    const SizedBox(width: AppSpacing.sm),
+                    const SizedBox(width: design.AppSpacing.sm),
                     _buildCategoryCard(
                         'منتجات غذائية', HugeIcons.strokeRoundedOrganicFood),
-                    const SizedBox(width: AppSpacing.sm),
+                    const SizedBox(width: design.AppSpacing.sm),
                     _buildCategoryCard(
                         'ملابس تقليدية', HugeIcons.strokeRoundedClothes),
-                    const SizedBox(width: AppSpacing.sm),
+                    const SizedBox(width: design.AppSpacing.sm),
                     _buildCategoryCard('جنابي', HugeIcons.strokeRoundedKnife01),
                   ],
                 ),
               ),
 
-              const SizedBox(height: AppSpacing.lg),
-              const Text('المنتجات الأكثر مبيعًا', style: AppTextStyles.h2),
-              const SizedBox(height: AppSpacing.md),
+              const SizedBox(height: design.AppSpacing.lg),
+              const Text('المنتجات الأكثر مبيعًا',
+                  style: design.AppTextStyles.h2),
+              const SizedBox(height: design.AppSpacing.md),
               StaggeredGrid.count(
                 crossAxisCount: 2,
-                mainAxisSpacing: AppSpacing.sm,
-                crossAxisSpacing: AppSpacing.sm,
+                mainAxisSpacing: design.AppSpacing.sm,
+                crossAxisSpacing: design.AppSpacing.sm,
                 children: [
                   StaggeredGridTile.count(
                     crossAxisCellCount: 1,
@@ -303,18 +328,18 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
           width: 60,
           height: 60,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppRadius.normal),
-            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(design.AppRadius.normal),
+            color: design.AppColors.primary,
             boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
           ),
-          child: Icon(iconData, size: 30, color: AppColors.surface),
+          child: Icon(iconData, size: 30, color: design.AppColors.surface),
         ),
         const SizedBox(height: 10),
         SizedBox(
           width: 70,
           child: Text(
             title,
-            style: AppTextStyles.body1.copyWith(fontSize: 11),
+            style: design.AppTextStyles.body1.copyWith(fontSize: 11),
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -329,7 +354,7 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
       width: 300,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(AppRadius.normal),
+        borderRadius: BorderRadius.circular(design.AppRadius.normal),
         boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
       ),
       child: Column(
@@ -340,8 +365,8 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
               children: [
                 ClipRRect(
                   borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(AppRadius.normal),
-                      bottom: Radius.circular(AppRadius.normal)),
+                      top: Radius.circular(design.AppRadius.normal),
+                      bottom: Radius.circular(design.AppRadius.normal)),
                   child: Image.asset(
                     imagePath,
                     fit: BoxFit.cover,
@@ -366,12 +391,12 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
                   left: 5,
                   right: 5,
                   child: Container(
-                    padding: const EdgeInsets.all(AppSpacing.sm),
+                    padding: const EdgeInsets.all(design.AppSpacing.sm),
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.6),
                       borderRadius: const BorderRadius.vertical(
-                          bottom: Radius.circular(AppRadius.normal),
-                          top: Radius.circular(AppRadius.normal)),
+                          bottom: Radius.circular(design.AppRadius.normal),
+                          top: Radius.circular(design.AppRadius.normal)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -380,7 +405,7 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(name,
-                                style: AppTextStyles.body1
+                                style: design.AppTextStyles.body1
                                     .copyWith(color: Colors.white)),
                             const Text("XL L M S",
                                 style: TextStyle(
@@ -392,7 +417,7 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(price,
-                                style: AppTextStyles.body1.copyWith(
+                                style: design.AppTextStyles.body1.copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 11)),
