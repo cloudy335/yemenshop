@@ -18,6 +18,7 @@ dependencies:
   convex_bottom_bar: ^3.0.0
   flutter_staggered_grid_view: ^0.6.0
   hugeicons: ^0.0.11
+  unicons: ^3.0.0
 
 dev_dependencies:
   flutter_test:
