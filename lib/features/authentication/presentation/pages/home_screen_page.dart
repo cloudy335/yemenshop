@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:yemenshop/core/theme/design_system.dart';
 import 'package:yemenshop/features/authentication/data/models/favorites.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/favorites_screen.dart';
