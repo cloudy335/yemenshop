@@ -26,18 +26,20 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   bloc_test: ^9.1.4
   build_runner: ^2.4.6
-  flutter_launcher_icons: ^0.14.3 # Updated package
+  flutter_launcher_icons: ^0.14.3
 
-# ========== LAUNCHER ICONS ==========
-flutter_launcher_icons: # Changed from flutter_icons
+# ← This must be here, at the root, not indented under flutter:
+flutter_icons:
   android: true
   ios: false
-  image_path: "assets/images/app_icon.png"
+  image_path: "assets/images/Logo.png"
 
 flutter:
   uses-material-design: true
+
   assets:
     - assets/images/
+
   fonts:
     - family: Rubik
       fonts:

@@ -1,16 +1,13 @@
+// lib/features/authentication/presentation/pages/widgets/products_section.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:yemenshop/core/theme/design_system.dart';
 import 'package:yemenshop/features/authentication/data/models/favorites.dart';
-// Import your custom classes and constants here
-// import 'path_to_favorite_item.dart';
-// import 'path_to_app_spacing.dart';
-// import 'path_to_app_text_styles.dart';
-// import 'path_to_app_radius.dart';
-// import 'path_to_huge_icons.dart';
 
 class ProductsSection extends StatelessWidget {
+  /// In a real app, you might fetch these from your ViewModel/Bloc/Provider.
   final List<FavoriteItem> products = [
     FavoriteItem(
       id: 'p1',
@@ -36,37 +33,28 @@ class ProductsSection extends StatelessWidget {
       title: 'عسل يمني',
       price: '300 ريال',
     ),
-    FavoriteItem(
-      id: 'p4',
-      imagePath: 'assets/images/honey5.png',
-      title: 'عسل يمني',
-      price: '300 ريال',
-    ),
-    FavoriteItem(
-      id: 'p2',
-      imagePath: 'assets/images/womenclothes.png',
-      title: 'جلالية يمني',
-      price: '100 ريال',
-    ),
-    FavoriteItem(
-      id: 'p1',
-      imagePath: 'assets/images/clothes.png',
-      title: 'ثوب وشال',
-      price: '200 ريال',
-    ),
+    // …you can duplicate or extend as you like
   ];
 
-  // Dummy favorite logic for demonstration
+  /// Called whenever the user taps the green “Add to Cart” icon.
+  final void Function(FavoriteItem item) onAddToCart;
+
+  /// The current list of favorites, passed down from parent.
+  final List<FavoriteItem> favorites;
+
+  /// Toggle a favorite on/off (parent manages actual list).
+  final void Function(FavoriteItem item) onToggleFavorite;
+
+  ProductsSection({
+    Key? key,
+    required this.onAddToCart,
+    required this.favorites,
+    required this.onToggleFavorite,
+  }) : super(key: key);
+
   bool _isFavorite(FavoriteItem item) {
-    // Replace with your actual favorite logic
-    return false;
+    return favorites.contains(item);
   }
-
-  void _toggleFavorite(FavoriteItem item) {
-    // Replace with your actual toggle logic
-  }
-
-  ProductsSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -112,6 +100,7 @@ class ProductsSection extends StatelessWidget {
                   children: [
                     Stack(
                       children: [
+                        // Product Image
                         ClipRRect(
                           borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(AppRadius.normal),
@@ -124,6 +113,8 @@ class ProductsSection extends StatelessWidget {
                             fit: BoxFit.cover,
                           ),
                         ),
+
+                        // Favorite (heart) button
                         Positioned(
                           top: 8,
                           right: 8,
@@ -136,10 +127,12 @@ class ProductsSection extends StatelessWidget {
                                     : Icons.favorite_border,
                                 color: Colors.white,
                               ),
-                              onPressed: () => _toggleFavorite(item),
+                              onPressed: () => onToggleFavorite(item),
                             ),
                           ),
                         ),
+
+                        // Title / Price / Add-to-Cart overlay
                         Positioned(
                           bottom: 5,
                           left: 5,
@@ -167,6 +160,7 @@ class ProductsSection extends StatelessWidget {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
+                                    // Price text
                                     Text(
                                       item.price,
                                       style: AppTextStyles.body1.copyWith(
@@ -175,17 +169,28 @@ class ProductsSection extends StatelessWidget {
                                         fontSize: 11,
                                       ),
                                     ),
-                                    Container(
-                                      width: 52,
-                                      height: 32,
-                                      decoration: BoxDecoration(
-                                        color: Colors.green,
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: const Icon(
-                                        HugeIcons.strokeRoundedShoppingCart01,
-                                        color: Colors.white,
-                                        size: 20,
+
+                                    // "Add to Cart" button
+                                    InkWell(
+                                      borderRadius: BorderRadius.circular(
+                                          AppRadius.normal),
+                                      onTap: () => onAddToCart(item),
+                                      child: Container(
+                                        width: 52,
+                                        height: 32,
+                                        decoration: BoxDecoration(
+                                          color: Colors.green,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: const Center(
+                                          child: Icon(
+                                            HugeIcons
+                                                .strokeRoundedShoppingCart01,
+                                            color: Colors.white,
+                                            size: 20,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ],
