@@ -54,10 +54,43 @@ class CartScreenUI extends StatelessWidget {
     required this.onCheckout,
   }) : super(key: key);
 
+  void _showInvoiceSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.3, // start at 30% of screen height
+        minChildSize: 0.3, // can shrink to 10%
+        maxChildSize: 0.9, // can expand to 80%
+        expand: false,
+        builder: (ctx, controller) => Container(
+          decoration: BoxDecoration(
+            color: AppColors.background,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(AppRadius.large),
+            ),
+          ),
+          child: SingleChildScrollView(
+            controller: controller,
+            child: _InvoiceSummaryCard(
+              subTotal: subTotal,
+              deliveryFee: deliveryFee,
+              discount: discount,
+              totalCost: totalCost,
+              onApplyPromoCode: onApplyPromoCode,
+              onCheckout: onCheckout,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl, // entire screen is RTL
+      textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: AppColors.surface,
         appBar: AppBar(
@@ -68,9 +101,7 @@ class CartScreenUI extends StatelessWidget {
               Platform.isIOS ? Icons.arrow_back_ios_new : Icons.arrow_back,
               color: AppColors.textPrimary,
             ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+            onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
             'سلتي',
@@ -78,103 +109,80 @@ class CartScreenUI extends StatelessWidget {
             textAlign: TextAlign.right,
           ),
           centerTitle: true,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.receipt_long),
+              color: AppColors.textPrimary,
+              tooltip: 'ملخص الفاتورة',
+              onPressed: () => _showInvoiceSheet(context),
+            ),
+          ],
         ),
         body: items.isEmpty
             ? Center(
                 child: Text(
                   'سلتك فارغة حالياً.',
-                  style: AppTextStyles.body2.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+                  style: AppTextStyles.body2
+                      .copyWith(color: AppColors.textSecondary),
                   textAlign: TextAlign.right,
                 ),
               )
-            : Column(
-                children: [
-                  // قائمة المنتجات في السلة
-                  Expanded(
-                    child: ListView.separated(
-                      padding: const EdgeInsets.only(
-                        top: AppSpacing.md,
-                        bottom: AppSpacing.md,
+            : ListView.separated(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                itemCount: items.length,
+                separatorBuilder: (_, __) =>
+                    const SizedBox(height: AppSpacing.md),
+                itemBuilder: (context, index) {
+                  final item = items[index];
+                  return Dismissible(
+                    key: ValueKey(item.id),
+                    direction: DismissDirection.endToStart,
+                    onDismissed: (_) {
+                      final removedItem = item;
+                      onRemoveItem(item.id);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'تم حذف "${item.name}"',
+                            style: AppTextStyles.body1
+                                .copyWith(color: AppColors.textOnPrimary),
+                            textAlign: TextAlign.right,
+                          ),
+                          backgroundColor: AppColors.error,
+                          action: SnackBarAction(
+                            label: 'تراجع',
+                            textColor: AppColors.textOnPrimary,
+                            onPressed: () => onUndoRemove(removedItem),
+                          ),
+                        ),
+                      );
+                    },
+                    background: Container(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: AppSpacing.sm, horizontal: AppSpacing.md),
+                      decoration: BoxDecoration(
+                        color: AppColors.error,
+                        borderRadius: BorderRadius.circular(AppRadius.normal),
                       ),
-                      itemCount: items.length,
-                      separatorBuilder: (_, __) =>
-                          const SizedBox(height: AppSpacing.md),
-                      itemBuilder: (context, index) {
-                        final item = items[index];
-                        return Dismissible(
-                          key: ValueKey(item.id),
-                          direction: DismissDirection.endToStart,
-                          onDismissed: (_) {
-                            final removedItem = item;
-                            onRemoveItem(item.id);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'تم حذف "${item.name}"',
-                                  style: AppTextStyles.body1.copyWith(
-                                    color: AppColors.textOnPrimary,
-                                  ),
-                                  textAlign: TextAlign.right,
-                                ),
-                                backgroundColor: AppColors.error,
-                                action: SnackBarAction(
-                                  label: 'تراجع',
-                                  textColor: AppColors.textOnPrimary,
-                                  onPressed: () {
-                                    onUndoRemove(removedItem);
-                                  },
-                                ),
-                              ),
-                            );
-                          },
-                          background: Container(
-                            margin: const EdgeInsets.symmetric(
-                              vertical: AppSpacing.sm,
-                              horizontal: AppSpacing.md,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.error,
-                              borderRadius:
-                                  BorderRadius.circular(AppRadius.normal),
-                            ),
-                            alignment: Alignment.centerRight,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.lg),
-                            child: const Icon(
-                              Icons.delete_outline,
-                              color: AppColors.textOnPrimary,
-                              size: 28,
-                            ),
-                          ),
-                          child: _CartItemWidget(
-                            item: item,
-                            onQuantityChanged: (change) =>
-                                onQuantityChanged(item.id, change),
-                          ),
-                        );
-                      },
+                      alignment: Alignment.centerRight,
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                      child: const Icon(Icons.delete_outline,
+                          size: 28, color: AppColors.textOnPrimary),
                     ),
-                  ),
-
-                  // بطاقة الفاتورة (بارتفاع معتدل) + زر الدفع
-                  _InvoiceSummaryCard(
-                    subTotal: subTotal,
-                    deliveryFee: deliveryFee,
-                    discount: discount,
-                    totalCost: totalCost,
-                    onApplyPromoCode: onApplyPromoCode,
-                    onCheckout: onCheckout,
-                  ),
-                ],
+                    child: _CartItemWidget(
+                      item: item,
+                      onQuantityChanged: (delta) =>
+                          onQuantityChanged(item.id, delta),
+                    ),
+                  );
+                },
               ),
       ),
     );
   }
 }
 
-// === عنصر واحد داخل السلة مع صورة المنتج وتحرير الكمية ===
 class _CartItemWidget extends StatelessWidget {
   final CartItem item;
   final void Function(int change) onQuantityChanged;
@@ -188,22 +196,17 @@ class _CartItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl, // this card is also RTL
+      textDirection: TextDirection.rtl,
       child: Card(
-        margin: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-        ),
-        // Make background color slightly transparent:
+        margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
         color: AppColors.background.withOpacity(0.9),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.large),
-        ),
+            borderRadius: BorderRadius.circular(AppRadius.large)),
         elevation: 2,
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.md),
           child: Row(
             children: [
-              // صورة المنتج
               Container(
                 width: 94,
                 height: 94,
@@ -211,20 +214,16 @@ class _CartItemWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppRadius.normal),
                   color: AppColors.surface,
                   image: DecorationImage(
-                    image: AssetImage(item.imagePath),
-                    fit: BoxFit.cover,
-                  ),
+                      image: AssetImage(item.imagePath), fit: BoxFit.cover),
                   boxShadow: const [
                     BoxShadow(
-                      color: Color.fromARGB(15, 0, 0, 0),
-                      blurRadius: 4,
-                      offset: Offset(0, 1),
-                    ),
+                        color: Color.fromARGB(15, 0, 0, 0),
+                        blurRadius: 4,
+                        offset: Offset(0, 1))
                   ],
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
-              // تفاصيل المنتج (الاسم والسعر ووحدة السعر)
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,48 +231,41 @@ class _CartItemWidget extends StatelessWidget {
                     Text(
                       item.name,
                       style: AppTextStyles.body1.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.bold,
-                      ),
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.bold),
                       textAlign: TextAlign.right,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'سعر الوحدة: \$${item.price.toStringAsFixed(2)}',
-                      style: AppTextStyles.body2.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                      style: AppTextStyles.body2
+                          .copyWith(color: AppColors.textSecondary),
                       textAlign: TextAlign.right,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'الإجمالي: \$${item.lineTotal.toStringAsFixed(2)}',
                       style: AppTextStyles.body2.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w600),
                       textAlign: TextAlign.right,
                     ),
                   ],
                 ),
               ),
-              // أقل حجم ممكن: أزرار تعديل الكمية داخل دائرة خضراء بخلفية بيضاء
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.primary,
                   borderRadius: BorderRadius.circular(AppRadius.normal),
                   boxShadow: const [
                     BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
+                        color: Colors.black12,
+                        blurRadius: 4,
+                        offset: Offset(0, 2))
                   ],
                 ),
                 padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
-                  vertical: AppSpacing.sm,
-                ),
+                    horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -281,28 +273,20 @@ class _CartItemWidget extends StatelessWidget {
                       onTap: item.quantity > 1
                           ? () => onQuantityChanged(-1)
                           : null,
-                      child: const Icon(
-                        Icons.remove,
-                        size: 16,
-                        color: Colors.white,
-                      ),
+                      child: const Icon(Icons.remove,
+                          size: 16, color: Colors.white),
                     ),
                     const SizedBox(width: AppSpacing.sm),
                     Text(
                       '${item.quantity}',
-                      style: AppTextStyles.body1.copyWith(
-                        color: Colors.white,
-                      ),
+                      style: AppTextStyles.body1.copyWith(color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(width: AppSpacing.sm),
                     GestureDetector(
                       onTap: () => onQuantityChanged(1),
-                      child: const Icon(
-                        Icons.add,
-                        size: 16,
-                        color: Colors.white,
-                      ),
+                      child:
+                          const Icon(Icons.add, size: 16, color: Colors.white),
                     ),
                   ],
                 ),
@@ -315,7 +299,7 @@ class _CartItemWidget extends StatelessWidget {
   }
 }
 
-// === بطاقة الفاتورة (Invoice) مع ملخص الأسعار وزر الدفع (بارتفاع معتدل) ===
+/// ملخص الفاتورة (بدون Card Borders)
 class _InvoiceSummaryCard extends StatefulWidget {
   final double subTotal;
   final double deliveryFee;
@@ -346,12 +330,12 @@ class _InvoiceSummaryCardState extends State<_InvoiceSummaryCard> {
   @override
   void initState() {
     super.initState();
-    _focusNode = FocusNode();
-    _focusNode.addListener(() {
-      setState(() {
-        _isFocused = _focusNode.hasFocus;
+    _focusNode = FocusNode()
+      ..addListener(() {
+        setState(() {
+          _isFocused = _focusNode.hasFocus;
+        });
       });
-    });
   }
 
   @override
@@ -374,27 +358,13 @@ class _InvoiceSummaryCardState extends State<_InvoiceSummaryCard> {
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: Container(
-        margin: const EdgeInsets.all(AppSpacing.md),
-        // Moderate padding to make it slightly taller (not too much)
+      child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.md,
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.background,
-          borderRadius: BorderRadius.circular(AppRadius.large),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
+            horizontal: AppSpacing.md, vertical: AppSpacing.md),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // صف إدخال رمز العرض
+            // رمز العرض
             Row(
               children: [
                 Expanded(
@@ -405,10 +375,9 @@ class _InvoiceSummaryCardState extends State<_InvoiceSummaryCard> {
                       boxShadow: _isFocused
                           ? [
                               BoxShadow(
-                                color: AppColors.primary.withOpacity(0.25),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
+                                  color: AppColors.primary.withOpacity(0.25),
+                                  blurRadius: 12,
+                                  offset: Offset(0, 4))
                             ]
                           : [],
                     ),
@@ -420,28 +389,22 @@ class _InvoiceSummaryCardState extends State<_InvoiceSummaryCard> {
                         textAlign: TextAlign.right,
                         decoration: InputDecoration(
                           hintText: 'أدخل رمز العرض',
-                          hintStyle: AppTextStyles.body2.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
+                          hintStyle: AppTextStyles.body2
+                              .copyWith(color: AppColors.textSecondary),
                           filled: true,
                           fillColor: AppColors.surface,
                           border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(AppRadius.normal),
-                            borderSide: BorderSide.none,
-                          ),
+                              borderRadius:
+                                  BorderRadius.circular(AppRadius.normal),
+                              borderSide: BorderSide.none),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(AppRadius.normal),
-                            borderSide: const BorderSide(
-                              color: AppColors.primary,
-                              width: 2.0,
-                            ),
-                          ),
+                              borderRadius:
+                                  BorderRadius.circular(AppRadius.normal),
+                              borderSide: BorderSide(
+                                  color: AppColors.primary, width: 2)),
                           contentPadding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.sm,
-                            vertical: AppSpacing.sm,
-                          ),
+                              horizontal: AppSpacing.sm,
+                              vertical: AppSpacing.sm),
                         ),
                         onSubmitted: (_) => _submitPromo(),
                       ),
@@ -450,77 +413,47 @@ class _InvoiceSummaryCardState extends State<_InvoiceSummaryCard> {
                 ),
                 const SizedBox(width: AppSpacing.sm),
                 SizedBox(
-                  width: 90, // slightly wider button
-                  height: 44, // a bit taller
-                  child: AppButton(
-                    label: 'تطبيق',
-                    onPressed: _submitPromo,
-                  ),
+                  width: 90,
+                  height: 44,
+                  child: AppButton(label: 'تطبيق', onPressed: _submitPromo),
                 ),
               ],
             ),
-
-            const SizedBox(height: AppSpacing.md), // moderate gap
-
-            // صف المجموع الفرعي
+            const SizedBox(height: AppSpacing.md),
             _buildInvoiceRow('المجموع الفرعي', widget.subTotal),
             const SizedBox(height: AppSpacing.sm),
-            // صف رسوم التوصيل
             _buildInvoiceRow('رسوم التوصيل', widget.deliveryFee),
             const SizedBox(height: AppSpacing.sm),
-            // صف الخصم (إذا وُجد)
             if (widget.discount > 0) ...[
               _buildInvoiceRow('الخصم', -widget.discount, isDiscount: true),
               const SizedBox(height: AppSpacing.md),
             ],
-
             const Divider(
-              height: AppSpacing.md * 2,
-              thickness: 1.2,
-              color: AppColors.textSecondary,
-            ),
-
-            // صف الإجمالي الكلي بخط أسمك قليلًا
-            _buildInvoiceRow(
-              'الإجمالي الكلي',
-              widget.totalCost,
-              isTotal: true,
-            ),
+                height: AppSpacing.md * 2,
+                thickness: 1.2,
+                color: AppColors.textSecondary),
+            _buildInvoiceRow('الإجمالي الكلي', widget.totalCost, isTotal: true),
             const SizedBox(height: AppSpacing.md),
-
-            // زر المتابعة إلى الدفع
             SizedBox(
-              width: double.infinity,
-              height: 44, // a bit taller
-              child: AppButton(
-                label: 'المتابعة إلى الدفع',
-                onPressed: widget.onCheckout,
-              ),
-            ),
+                height: 44,
+                child: AppButton(
+                    label: 'المتابعة إلى الدفع', onPressed: widget.onCheckout)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildInvoiceRow(
-    String label,
-    double value, {
-    bool isTotal = false,
-    bool isDiscount = false,
-  }) {
+  Widget _buildInvoiceRow(String label, double value,
+      {bool isTotal = false, bool isDiscount = false}) {
     final colorText = isDiscount ? AppColors.primary : AppColors.textPrimary;
     final valueText = isDiscount
         ? '-\$${value.abs().toStringAsFixed(0)}'
         : '\$${value.toStringAsFixed(0)}';
-
     final valueStyle = isTotal
-        ? AppTextStyles.body1.copyWith(
-            color: colorText,
-            fontWeight: FontWeight.bold,
-          )
+        ? AppTextStyles.body1
+            .copyWith(color: colorText, fontWeight: FontWeight.bold)
         : AppTextStyles.body2.copyWith(color: colorText);
-
     final labelStyle = isTotal
         ? AppTextStyles.body2.copyWith(color: AppColors.textPrimary)
         : AppTextStyles.body2.copyWith(color: AppColors.textSecondary);
@@ -530,16 +463,8 @@ class _InvoiceSummaryCardState extends State<_InvoiceSummaryCard> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: labelStyle,
-            textAlign: TextAlign.right,
-          ),
-          Text(
-            valueText,
-            style: valueStyle,
-            textAlign: TextAlign.right,
-          ),
+          Text(label, style: labelStyle, textAlign: TextAlign.right),
+          Text(valueText, style: valueStyle, textAlign: TextAlign.right),
         ],
       ),
     );
