@@ -1,30 +1,29 @@
 import 'package:flutter/material.dart';
-// Make sure all these imports are correct and point to your actual page files
-import 'package:yemenshop/features/authentication/presentation/pages/create_login_page.dart';
-import 'package:yemenshop/features/authentication/presentation/pages/home_screen_page.dart'; // Make sure this is your actual home screen widget
-import 'package:yemenshop/features/authentication/presentation/pages/login_page.dart';
+// ... باقي الاستيرادات السابقة
+import 'package:yemenshop/features/authentication/presentation/pages/LocationPickerPage.dart';
+import 'package:yemenshop/features/authentication/presentation/pages/cart_page.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/create_account_page.dart';
+import 'package:yemenshop/features/authentication/presentation/pages/create_login_page.dart';
+import 'package:yemenshop/features/authentication/presentation/pages/home_screen_page.dart';
+import 'package:yemenshop/features/authentication/presentation/pages/login_page.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/otp_page.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/otp_reset_password.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/reset_password.dart';
-import 'package:yemenshop/features/authentication/presentation/pages/splash_page.dart'; // Added for splash route
-
-import 'features/authentication/presentation/pages/cart_page.dart'; // Import for IntroductionPage
+import 'package:yemenshop/features/authentication/presentation/pages/splash_page.dart'; // أضف هذا لمسار شاشة الخريطة
 
 class AppRoutes {
   // Define all your route constants here
-  static const String splash = '/splash'; // Assuming you want a splash screen
-  static const String introduction =
-      '/introduction'; // Assuming you have an intro screen
-  static const String createLogin =
-      '/'; // This is your initial route, landing on CreateLoginPageUI
+  static const String splash = '/splash';
+  static const String introduction = '/introduction';
+  static const String createLogin = '/';
   static const String login = '/login';
   static const String createAccount = '/create-account';
-  static const String otpRegistration = '/otp-page'; // For registration OTP
-  static const String otpReset = '/otp-reset'; // For reset OTP
+  static const String otpRegistration = '/otp-page';
+  static const String otpReset = '/otp-reset';
   static const String resetPassword = '/reset-password';
-  static const String home = '/home'; // <--- THIS IS THE MISSING LINE!
-  static const String cart = '/cart'; // Assuming you have a cart route
+  static const String home = '/home';
+  static const String cart = '/cart';
+  static const String map = '/map'; // <--- أضفت هذا
 
   static Route<dynamic> generate(RouteSettings settings) {
     switch (settings.name) {
@@ -45,26 +44,25 @@ class AppRoutes {
           builder: (_) => const CreateAccountPageUI(),
           fullscreenDialog: true,
         );
-      case otpRegistration: // Registration OTP Page
+      case otpRegistration:
         return MaterialPageRoute(
           builder: (_) => OTPPageUI(),
           fullscreenDialog: true,
         );
-      case otpReset: // Reset Password OTP Page
+      case otpReset:
         return MaterialPageRoute(
           builder: (_) => OTPVerificationScreen(),
           fullscreenDialog: true,
         );
-      case resetPassword: // Reset Password Page
+      case resetPassword:
         return MaterialPageRoute(
           builder: (_) => const ResetPasswordScreen(),
         );
-      case home: // Home Page
+      case home:
         return MaterialPageRoute(
-          builder: (_) =>
-              YemenShopHomeScreen(), // Ensure this is your actual home screen widget
+          builder: (_) => YemenShopHomeScreen(),
         );
-      case cart: // Cart Page (if you have one)
+      case cart:
         return MaterialPageRoute(
           builder: (_) => CartScreenUI(
             items: const [],
@@ -79,8 +77,12 @@ class AppRoutes {
             onCheckout: () {},
           ),
         );
+      case map: // <-- شاشة الخريطة
+        return MaterialPageRoute(
+          builder: (_) =>
+              const LocationPickerPage(), // غيرها إلى اسم صفحة الخريطة عندك إذا اختلف
+        );
       default:
-        // Fallback for unknown routes
         return MaterialPageRoute(
           builder: (_) => Scaffold(
             appBar: AppBar(title: const Text('خطأ في المسار')),

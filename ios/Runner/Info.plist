@@ -45,5 +45,18 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>GMSApiKey</key>
+	<string>AIzaSyAXz9hkF5_qZ9mU6iFuc3O_tMvm7Kqa-ko</string>
+
+	<!-- ✅ Location Permissions -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>نحتاج إلى موقعك لعرض موقعك على الخريطة</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>نستخدم موقعك لتحسين تجربة التطبيق</string>
+
+	<!-- ✅ Required for Google Maps -->
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
+
 </dict>
 </plist>

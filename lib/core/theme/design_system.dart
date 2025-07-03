@@ -31,6 +31,10 @@ class AppColors {
   static var primaryLight;
 
   static var onPrimary;
+
+  static var text;
+
+  static var card;
 }
 
 /// Spacing scale (8-pt grid)
