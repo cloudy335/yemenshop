@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // for SystemUiOverlayStyle
-import 'package:yemenshop/core/theme/design_system.dart';
-import 'package:yemenshop/features/authentication/data/models/favorites.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:hugeicons/hugeicons.dart';
+
+import 'package:yemenshop/core/theme/design_system.dart';
+import 'package:yemenshop/features/authentication/data/models/favorites.dart';
 
 class FavoritesScreen extends StatelessWidget {
   final List<FavoriteItem> favorites;

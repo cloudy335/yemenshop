@@ -8,6 +8,7 @@ import 'package:yemenshop/features/authentication/presentation/pages/home_screen
 import 'package:yemenshop/features/authentication/presentation/pages/login_page.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/otp_page.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/otp_reset_password.dart';
+import 'package:yemenshop/features/authentication/presentation/pages/payment_done.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/reset_password.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/splash_page.dart'; // أضف هذا لمسار شاشة الخريطة
 
@@ -23,7 +24,9 @@ class AppRoutes {
   static const String resetPassword = '/reset-password';
   static const String home = '/home';
   static const String cart = '/cart';
-  static const String map = '/map'; // <--- أضفت هذا
+  static const String map = '/map';
+
+  static String paymentSuccess = '/payment-success'; // <--- أضفت هذا
 
   static Route<dynamic> generate(RouteSettings settings) {
     switch (settings.name) {
@@ -81,6 +84,11 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) =>
               const LocationPickerPage(), // غيرها إلى اسم صفحة الخريطة عندك إذا اختلف
+        );
+      case '/payment-success':
+        return MaterialPageRoute(
+          builder: (_) =>
+              const PaymentSuccessScreen(), // تأكد من استيراد الصفحة
         );
       default:
         return MaterialPageRoute(

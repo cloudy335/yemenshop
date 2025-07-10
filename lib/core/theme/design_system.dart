@@ -35,6 +35,10 @@ class AppColors {
   static var text;
 
   static var card;
+
+  static var primaryGradient;
+
+  static var border;
 }
 
 /// Spacing scale (8-pt grid)
@@ -63,6 +67,10 @@ class AppElevation {
   static const double low = 2.0;
   static const double medium = 4.0;
   static const double high = 8.0;
+
+  static var small;
+
+  static var large;
 }
 
 /// Typography styles using Rubik font
@@ -114,6 +122,8 @@ class AppTextStyles {
   static var buttonText;
 
   static var titleMedium;
+
+  static var button;
 }
 
 /// Material Button styles

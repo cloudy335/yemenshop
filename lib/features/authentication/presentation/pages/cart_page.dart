@@ -3,8 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io' show Platform;
+import 'package:hugeicons/hugeicons.dart';
 import 'package:yemenshop/core/theme/app_button.dart';
 import 'package:yemenshop/core/theme/design_system.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:yemenshop/features/authentication/presentation/pages/inovince_screen.dart';
 
 /// نموذج بيانات عنصر السلة مع مسار الصورة
 class CartItem {
@@ -26,6 +29,8 @@ class CartItem {
   });
 
   double get lineTotal => price * quantity;
+
+  get description => null;
 }
 
 class CartScreenUI extends StatelessWidget {
@@ -60,9 +65,9 @@ class CartScreenUI extends StatelessWidget {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (_) => DraggableScrollableSheet(
-        initialChildSize: 0.3, // start at 30% of screen height
-        minChildSize: 0.3, // can shrink to 10%
-        maxChildSize: 0.9, // can expand to 80%
+        initialChildSize: 0.3,
+        minChildSize: 0.3,
+        maxChildSize: 0.9,
         expand: false,
         builder: (ctx, controller) => Container(
           decoration: BoxDecoration(
@@ -79,7 +84,22 @@ class CartScreenUI extends StatelessWidget {
               discount: discount,
               totalCost: totalCost,
               onApplyPromoCode: onApplyPromoCode,
-              onCheckout: onCheckout,
+              onCheckout: () {
+                // 1. Close bottom sheet
+                Navigator.of(ctx).pop();
+                // 2. Navigate to full InvoiceScreen
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => ModernInvoiceScreen(
+                      items: items,
+                      subTotal: subTotal,
+                      deliveryFee: deliveryFee,
+                      discount: discount,
+                      totalCost: totalCost,
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ),
@@ -92,10 +112,10 @@ class CartScreenUI extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.surface,
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: AppColors.surface,
-          elevation: 2,
+          backgroundColor: Colors.white,
+          elevation: 0,
           leading: IconButton(
             icon: Icon(
               Platform.isIOS ? Icons.arrow_back_ios_new : Icons.arrow_back,
@@ -106,13 +126,15 @@ class CartScreenUI extends StatelessWidget {
           title: Text(
             'سلتي',
             style: AppTextStyles.h2.copyWith(color: AppColors.textPrimary),
-            textAlign: TextAlign.right,
           ),
           centerTitle: true,
           actions: [
             IconButton(
-              icon: const Icon(Icons.receipt_long),
-              color: AppColors.textPrimary,
+              icon: Icon(
+                CupertinoIcons.doc_text,
+                size: 30,
+              ),
+              color: AppColors.primary,
               tooltip: 'ملخص الفاتورة',
               onPressed: () => _showInvoiceSheet(context),
             ),
@@ -130,8 +152,7 @@ class CartScreenUI extends StatelessWidget {
             : ListView.separated(
                 padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
                 itemCount: items.length,
-                separatorBuilder: (_, __) =>
-                    const SizedBox(height: AppSpacing.md),
+                separatorBuilder: (_, __) => const SizedBox(height: 20),
                 itemBuilder: (context, index) {
                   final item = items[index];
                   return Dismissible(
@@ -146,7 +167,6 @@ class CartScreenUI extends StatelessWidget {
                             'تم حذف "${item.name}"',
                             style: AppTextStyles.body1
                                 .copyWith(color: AppColors.textOnPrimary),
-                            textAlign: TextAlign.right,
                           ),
                           backgroundColor: AppColors.error,
                           action: SnackBarAction(
@@ -170,7 +190,7 @@ class CartScreenUI extends StatelessWidget {
                       child: const Icon(Icons.delete_outline,
                           size: 28, color: AppColors.textOnPrimary),
                     ),
-                    child: _CartItemWidget(
+                    child: _ModernCartItemCard(
                       item: item,
                       onQuantityChanged: (delta) =>
                           onQuantityChanged(item.id, delta),
@@ -183,11 +203,11 @@ class CartScreenUI extends StatelessWidget {
   }
 }
 
-class _CartItemWidget extends StatelessWidget {
+class _ModernCartItemCard extends StatelessWidget {
   final CartItem item;
   final void Function(int change) onQuantityChanged;
 
-  const _CartItemWidget({
+  const _ModernCartItemCard({
     Key? key,
     required this.item,
     required this.onQuantityChanged,
@@ -197,30 +217,30 @@ class _CartItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: Card(
+      child: Container(
         margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-        color: AppColors.background.withOpacity(0.9),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.large)),
-        elevation: 2,
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 242, 240, 240),
+          borderRadius: BorderRadius.circular(AppRadius.large),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.12),
+              blurRadius: 4,
+              offset: Offset(0, 6),
+            ),
+          ],
+        ),
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.md),
           child: Row(
             children: [
-              Container(
-                width: 94,
-                height: 94,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(AppRadius.normal),
-                  color: AppColors.surface,
-                  image: DecorationImage(
-                      image: AssetImage(item.imagePath), fit: BoxFit.cover),
-                  boxShadow: const [
-                    BoxShadow(
-                        color: Color.fromARGB(15, 0, 0, 0),
-                        blurRadius: 4,
-                        offset: Offset(0, 1))
-                  ],
+              ClipRRect(
+                borderRadius: BorderRadius.circular(AppRadius.normal),
+                child: Image.asset(
+                  item.imagePath,
+                  width: 94,
+                  height: 94,
+                  fit: BoxFit.cover,
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
@@ -233,60 +253,65 @@ class _CartItemWidget extends StatelessWidget {
                       style: AppTextStyles.body1.copyWith(
                           color: AppColors.textPrimary,
                           fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.right,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 16),
                     Text(
-                      'سعر الوحدة: \$${item.price.toStringAsFixed(2)}',
-                      style: AppTextStyles.body2
-                          .copyWith(color: AppColors.textSecondary),
-                      textAlign: TextAlign.right,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'الإجمالي: \$${item.lineTotal.toStringAsFixed(2)}',
-                      style: AppTextStyles.body2.copyWith(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w600),
-                      textAlign: TextAlign.right,
+                      'السعر: ${item.price.toStringAsFixed(2)} ريال',
+                      style: TextStyle(
+                          fontFamily: AppTextStyles.fontFamily,
+                          fontSize: 13,
+                          color: AppColors.secondary),
                     ),
                   ],
                 ),
               ),
+
+              // Smaller outlined counter
               Container(
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(AppRadius.normal),
-                  boxShadow: const [
-                    BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 4,
-                        offset: Offset(0, 2))
-                  ],
-                ),
-                padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    GestureDetector(
-                      onTap: item.quantity > 1
-                          ? () => onQuantityChanged(-1)
-                          : null,
-                      child: const Icon(Icons.remove,
-                          size: 16, color: Colors.white),
+                    Container(
+                      width: 22,
+                      height: 22,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(AppRadius.small),
+                      ),
+                      child: IconButton(
+                        onPressed: item.quantity > 1
+                            ? () => onQuantityChanged(-1)
+                            : null,
+                        icon: const Icon(Icons.remove, size: 16),
+                        color: Colors.white,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
                     Text(
                       '${item.quantity}',
-                      style: AppTextStyles.body1.copyWith(color: Colors.white),
-                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: AppTextStyles.fontFamily, fontSize: 15),
                     ),
                     const SizedBox(width: AppSpacing.sm),
-                    GestureDetector(
-                      onTap: () => onQuantityChanged(1),
-                      child:
-                          const Icon(Icons.add, size: 16, color: Colors.white),
+                    Container(
+                      width: 22,
+                      height: 22,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(AppRadius.small),
+                      ),
+                      child: IconButton(
+                        onPressed: () => onQuantityChanged(1),
+                        icon: const Icon(Icons.add, size: 16),
+                        color: Colors.white,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
                     ),
                   ],
                 ),
@@ -364,7 +389,6 @@ class _InvoiceSummaryCardState extends State<_InvoiceSummaryCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // رمز العرض
             Row(
               children: [
                 Expanded(

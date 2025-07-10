@@ -28,16 +28,36 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _showTopShadow = false;
 
-  // Keep track of "favorites":
+  // keep track of favorites and cart items
   final List<FavoriteItem> _favorites = [];
-
-  // Keep track of "cart" as a list of CartItem:
   final List<CartItem> _cartItems = [];
 
-  // Bottom‐nav index:
-  int _selectedIndex = 2; // Start on Home (index 2)
+  // your master product list
+  final List<FavoriteItem> _allProducts = [
+    FavoriteItem(
+      id: 'a',
+      title: 'قهوة يمنية طازجة',
+      imagePath: 'assets/images/coffee.png',
+      price: '150 ريال',
+    ),
+    FavoriteItem(
+      id: 'b',
+      title: 'أفضل العسل اليمني',
+      imagePath: 'assets/images/honey5.png',
+      price: '200 ريال',
+    ),
+    FavoriteItem(
+      id: 'c',
+      title: 'خصومات كبيرة',
+      imagePath: 'assets/images/coffee4.png',
+      price: '100 ريال',
+    ),
+  ];
 
-  // Your promo ads (passed into PromoCarousel):
+  // bottom-nav index
+  int _selectedIndex = 2;
+
+  // promo ads
   final List<PromoAd> promoAds = [
     PromoAd(
       id: 'a',
@@ -66,8 +86,6 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_handleScroll);
-
-    // Auto‐scroll the promo carousel every 4 seconds:
     Timer.periodic(const Duration(seconds: 4), (_) {
       setState(() {
         _currentPromoPage = (_currentPromoPage + 1) % promoAds.length;
@@ -110,14 +128,11 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
     });
   }
 
-  /// Convert a FavoriteItem → CartItem and add to cart (or bump qty if exists).
   void _addToCart(FavoriteItem fav) {
     final unitPrice = double.tryParse(
           fav.price.replaceAll(RegExp(r'[^0-9.]'), ''),
         ) ??
         0.0;
-
-    // Create a new CartItem:
     final newItem = CartItem(
       id: fav.id,
       name: fav.title,
@@ -125,79 +140,97 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
       price: unitPrice,
       quantity: 1,
     );
-
     setState(() {
-      final existingIndex =
-          _cartItems.indexWhere((cart) => cart.id == newItem.id);
-      if (existingIndex >= 0) {
-        // If already in cart, increment quantity (now allowed, since quantity is mutable)
-        _cartItems[existingIndex].quantity += 1;
+      final idx = _cartItems.indexWhere((c) => c.id == newItem.id);
+      if (idx >= 0) {
+        _cartItems[idx].quantity += 1;
       } else {
-        // Otherwise, add as a new line:
         _cartItems.add(newItem);
       }
     });
   }
 
-  /// Called by CartScreenUI when the “+” or “–” button is tapped.
   void _onQuantityChanged(String itemId, int change) {
     setState(() {
       final idx = _cartItems.indexWhere((c) => c.id == itemId);
       if (idx < 0) return;
-      final old = _cartItems[idx];
-      final newQty = old.quantity + change;
+      final newQty = _cartItems[idx].quantity + change;
       if (newQty <= 0) {
         _cartItems.removeAt(idx);
       } else {
-        old.quantity = newQty;
+        _cartItems[idx].quantity = newQty;
       }
     });
   }
 
-  /// Called by CartScreenUI when the user swipes‐to‐delete a line.
   void _onRemoveItem(String itemId) {
-    setState(() {
-      _cartItems.removeWhere((c) => c.id == itemId);
-    });
+    setState(() => _cartItems.removeWhere((c) => c.id == itemId));
   }
 
-  /// Called by CartScreenUI if the user taps “Undo” after removal.
   void _onUndoRemove(CartItem removedItem) {
-    setState(() {
-      _cartItems.add(removedItem);
-    });
+    setState(() => _cartItems.add(removedItem));
   }
 
-  /// Called by CartScreenUI when the user enters a promo code.
   void _onApplyPromoCode(String code) {
-    // Example: apply a flat 10.0 discount if code == "SAVE10"
-    if (code == 'SAVE10' && _cartItems.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('رمز العرض SAVE10 وافد بنجاح!')),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('رمز العرض غير صالح')),
-      );
-    }
+    final valid = code == 'SAVE10' && _cartItems.isNotEmpty;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          valid ? 'رمز العرض SAVE10 تم تفعيله!' : 'رمز العرض غير صالح',
+        ),
+      ),
+    );
   }
 
-  /// Called by CartScreenUI when the user taps “Checkout”
   void _onCheckout() {
-    if (_cartItems.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('السلة فارغة')),
-      );
-      return;
-    }
+    final msg =
+        _cartItems.isEmpty ? 'السلة فارغة' : 'جاري الانتقال إلى صفحة الدفع...';
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('جاري الانتقال إلى صفحة الدفع...')),
+      SnackBar(content: Text(msg)),
     );
-    // e.g. Navigator.push(context, MaterialPageRoute(builder: (_) => PaymentScreen()));
   }
 
   void _onNavBarTapped(int index) {
     setState(() => _selectedIndex = index);
+  }
+
+  Widget _buildHomeContent() {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: CustomScrollView(
+        controller: _scrollController,
+        slivers: [
+          SliverAppBar(
+            floating: true,
+            snap: true,
+            automaticallyImplyLeading: false,
+            expandedHeight: 100,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            flexibleSpace: const FlexibleSpaceBar(
+              collapseMode: CollapseMode.pin,
+              background: AppBarContent(),
+            ),
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate([
+              PromoCarousel(
+                promoController: _promoController,
+                promoAds: promoAds,
+              ),
+              const CategoriesSection(),
+              // ← here we pass in the real product list
+              ProductsSection(
+                products: _allProducts,
+                favorites: _favorites,
+                onToggleFavorite: _toggleFavorite,
+                onAddToCart: _addToCart,
+              ),
+            ]),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -207,19 +240,12 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          // 0: Settings Tab
           const SettingsScreen(),
-
-          // 1: Favorites Tab
           FavoritesScreen(
             favorites: _favorites,
             onToggleFavorite: _toggleFavorite,
           ),
-
-          // 2: Home Tab
           _buildHomeContent(),
-
-          // 3: Cart Tab
           CartScreenUI(
             items: _cartItems,
             subTotal: _cartItems.fold(
@@ -238,54 +264,12 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
             onApplyPromoCode: _onApplyPromoCode,
             onCheckout: _onCheckout,
           ),
-
-          // 4: Profile Tab
           const ProfileScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavBar(
         selectedIndex: _selectedIndex,
         onNavBarTapped: _onNavBarTapped,
-      ),
-    );
-  }
-
-  Widget _buildHomeContent() {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          SliverAppBar(
-            floating: true,
-            snap: true,
-            automaticallyImplyLeading: false,
-            expandedHeight: 100,
-            backgroundColor: AppColors.surface,
-            elevation: 0,
-            flexibleSpace: const FlexibleSpaceBar(
-              collapseMode: CollapseMode.pin,
-              background: AppBarContent(),
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate([
-              PromoCarousel(
-                promoController: _promoController,
-                promoAds: promoAds,
-              ),
-
-              const CategoriesSection(),
-
-              // Pass in our callbacks and favorites list:
-              ProductsSection(
-                onAddToCart: _addToCart,
-                favorites: _favorites,
-                onToggleFavorite: _toggleFavorite,
-              ),
-            ]),
-          ),
-        ],
       ),
     );
   }
