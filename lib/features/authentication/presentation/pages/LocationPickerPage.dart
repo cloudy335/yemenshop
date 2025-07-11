@@ -151,7 +151,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                             _address,
                             style: TextStyle(
                               fontSize: 16,
-                              color: AppColors.text,
+                              color: Colors.grey,
                               fontFamily: 'Rubik',
                               fontWeight: FontWeight.w500,
                             ),

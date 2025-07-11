@@ -1,10 +1,8 @@
+// lib/features/authentication/presentation/pages/widgets/categories_section.dart
+
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:yemenshop/core/theme/design_system.dart';
-// Import your custom styles and icons here
-// import 'path_to_app_text_styles.dart';
-// import 'path_to_app_spacing.dart';
-// import 'path_to_huge_icons.dart';
 
 class CategoriesSection extends StatelessWidget {
   const CategoriesSection({Key? key}) : super(key: key);
@@ -17,7 +15,8 @@ class CategoriesSection extends StatelessWidget {
           height: 60,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppRadius.normal),
-            color: AppColors.primary,
+            gradient:
+                AppColors.primaryGradient, // ← use the centralized gradient
             boxShadow: const [
               BoxShadow(color: Colors.black12, blurRadius: 4),
             ],

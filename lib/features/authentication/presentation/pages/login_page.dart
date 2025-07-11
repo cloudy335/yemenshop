@@ -1,3 +1,5 @@
+// lib/features/authentication/presentation/pages/login_page_ui.dart
+
 import 'package:flutter/material.dart';
 import 'package:yemenshop/core/theme/design_system.dart';
 import 'package:yemenshop/routes.dart';
@@ -7,138 +9,117 @@ class LoginPageUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Input decoration with filled surface and no inner border
+    InputDecoration _inputDecoration(String label) {
+      return AppInputStyles.defaultDecoration(label: label).copyWith(
+        filled: true,
+        fillColor: AppColors.surface,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppRadius.normal),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppRadius.normal),
+          borderSide: BorderSide.none,
+        ),
+        labelStyle: const TextStyle(
+          fontFamily: AppTextStyles.fontFamily,
+          color: AppColors.textPrimary,
+          fontSize: 12,
+        ),
+      );
+    }
+
+    // Field wrapped in primary gradient border
+    Widget _gradientBorderField({
+      required String label,
+      bool obscure = false,
+      TextInputType? keyboardType,
+    }) {
+      return Container(
+        decoration: BoxDecoration(
+          gradient: AppColors.primaryGradient,
+          borderRadius: BorderRadius.circular(AppRadius.normal),
+        ),
+        padding: const EdgeInsets.all(1),
+        child: TextField(
+          obscureText: obscure,
+          keyboardType: keyboardType,
+          textAlign: TextAlign.right,
+          textAlignVertical: TextAlignVertical.center,
+          style: const TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
+            fontSize: 14,
+            color: AppColors.textPrimary,
+          ),
+          decoration: _inputDecoration(label),
+        ),
+      );
+    }
+
     return Scaffold(
-      backgroundColor: AppColors.surface, // White background
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         child: Directionality(
-          textDirection: TextDirection.rtl, // Apply RTL globally
+          textDirection: TextDirection.rtl,
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
             child: Column(
               children: [
                 const SizedBox(height: AppSpacing.xl * 2.5),
-
-                // Logo
-                Image.asset(
-                  'assets/images/Logo.png',
-                  width: 140,
-                  height: 140,
-                ),
-
+                Image.asset('assets/images/Logo.png', width: 140, height: 140),
                 const SizedBox(height: AppSpacing.md),
-
-                // Title
-                const Text(
-                  'تسجيل الدخول',
-                  style: AppTextStyles.h2,
-                ),
-
+                const Text('تسجيل الدخول', style: AppTextStyles.h2),
                 const SizedBox(height: AppSpacing.xl),
 
-                // Phone Field
-                TextField(
-                  textAlign: TextAlign.right, // Align text to the right
-                  textAlignVertical: TextAlignVertical.center,
+                // Phone Field with primary gradient border
+                _gradientBorderField(
+                  label: 'رقم الهاتف',
                   keyboardType: TextInputType.phone,
-                  style: const TextStyle(
-                    fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 14,
-                    color: AppColors.textPrimary,
-                  ),
-                  decoration: AppInputStyles.defaultDecoration(
-                    label: 'رقم الهاتف',
-                  ).copyWith(
-                    filled: true,
-                    fillColor: AppColors.surface,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                          AppRadius.normal), // Same as button
-                      borderSide: const BorderSide(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    labelStyle: const TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        color: AppColors.textPrimary,
-                        fontSize: 12),
-                  ),
                 ),
+                const SizedBox(height: AppSpacing.lg),
 
-                // Adjusted space between input fields
-                const SizedBox(
-                    height: AppSpacing
-                        .lg), // Space between phone and password field
-
-                // Password Field
-                TextField(
-                  textAlign: TextAlign.right,
-                  textAlignVertical: TextAlignVertical.center,
-                  obscureText: true,
-                  style: const TextStyle(
-                    fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 14,
-                    color: AppColors.textPrimary,
-                  ),
-                  decoration: AppInputStyles.defaultDecoration(
-                    label: 'كلمة المرور',
-                  ).copyWith(
-                    filled: true,
-                    fillColor: AppColors.surface,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                          AppRadius.normal), // Same as button
-                      borderSide: const BorderSide(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    labelStyle: const TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        color: AppColors.textPrimary,
-                        fontSize: 12),
-                  ),
+                // Password Field with primary gradient border
+                _gradientBorderField(
+                  label: 'كلمة المرور',
+                  obscure: true,
                 ),
+                const SizedBox(height: AppSpacing.sm),
 
-                const SizedBox(
-                    height: AppSpacing
-                        .sm), // Slightly smaller space for the "forgot password" text
-
-                // Forgot password
+                // Forgot password link
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.resetPassword);
-                    },
+                    onPressed: () =>
+                        Navigator.pushNamed(context, AppRoutes.resetPassword),
                     style: TextButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
                       minimumSize: const Size(50, 30),
                     ),
-                    child: const Text(
-                      'نسيت كلمة المرور؟',
-                      style: AppTextStyles.caption,
-                    ),
+                    child: const Text('نسيت كلمة المرور؟',
+                        style: AppTextStyles.caption),
                   ),
                 ),
+                const SizedBox(height: AppSpacing.lg),
 
-                const SizedBox(
-                    height: AppSpacing.lg), // Space before login button
-
-                // Login button just below the fields
-                SizedBox(
+                // Login button with primary gradient background
+                Container(
                   width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(AppRadius.normal),
+                  ),
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.home);
-                    },
+                    onPressed: () =>
+                        Navigator.pushNamed(context, AppRoutes.home),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          AppColors.primary, // Icon color for button
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
                       padding:
                           const EdgeInsets.symmetric(vertical: AppSpacing.md),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            AppRadius.normal), // Same radius
+                        borderRadius: BorderRadius.circular(AppRadius.normal),
                       ),
                     ),
                     child: const Text(
@@ -152,21 +133,16 @@ class LoginPageUI extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(height: AppSpacing.sm),
 
-                const SizedBox(
-                    height: AppSpacing
-                        .sm), // Reduced space for better visual alignment
-
-                // Add new TextButton for creating account
+                // Create account link
                 Align(
-                  alignment: Alignment.center, // Center the text button
+                  alignment: Alignment.center,
                   child: TextButton(
-                    onPressed: () {
-                      // Navigate to the create account screen
-                      Navigator.pushNamed(context, '/create-account');
-                    },
+                    onPressed: () =>
+                        Navigator.pushNamed(context, AppRoutes.createAccount),
                     style: TextButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                       minimumSize: const Size(50, 30),
                     ),

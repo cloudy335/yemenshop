@@ -3,10 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io' show Platform;
-import 'package:hugeicons/hugeicons.dart';
-import 'package:yemenshop/core/theme/app_button.dart';
 import 'package:yemenshop/core/theme/design_system.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/inovince_screen.dart';
 
 /// نموذج بيانات عنصر السلة مع مسار الصورة
@@ -14,10 +11,7 @@ class CartItem {
   final String id;
   final String name;
   final String imagePath;
-
-  // Mutable quantity so it can be updated
   int quantity;
-
   final double price;
 
   CartItem({
@@ -29,22 +23,10 @@ class CartItem {
   });
 
   double get lineTotal => price * quantity;
-
   get description => null;
 }
 
 class CartScreenUI extends StatelessWidget {
-  final List<CartItem> items;
-  final double subTotal;
-  final double deliveryFee;
-  final double discount;
-  final double totalCost;
-  final void Function(String itemId, int change) onQuantityChanged;
-  final void Function(String itemId) onRemoveItem;
-  final void Function(CartItem removedItem) onUndoRemove;
-  final void Function(String code) onApplyPromoCode;
-  final VoidCallback onCheckout;
-
   const CartScreenUI({
     Key? key,
     required this.items,
@@ -55,55 +37,93 @@ class CartScreenUI extends StatelessWidget {
     required this.onQuantityChanged,
     required this.onRemoveItem,
     required this.onUndoRemove,
-    required this.onApplyPromoCode,
     required this.onCheckout,
   }) : super(key: key);
 
+  final List<CartItem> items;
+  final double subTotal;
+  final double deliveryFee;
+  final double discount;
+  final double totalCost;
+  final void Function(String itemId, int change) onQuantityChanged;
+  final void Function(String itemId) onRemoveItem;
+  final void Function(CartItem removedItem) onUndoRemove;
+  final VoidCallback onCheckout;
+
   void _showInvoiceSheet(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (_) => DraggableScrollableSheet(
-        initialChildSize: 0.3,
-        minChildSize: 0.3,
-        maxChildSize: 0.9,
-        expand: false,
-        builder: (ctx, controller) => Container(
-          decoration: BoxDecoration(
-            color: AppColors.background,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(AppRadius.large),
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              AppSpacing.sm,
+              AppSpacing.md,
+              AppSpacing.lg,
             ),
-          ),
-          child: SingleChildScrollView(
-            controller: controller,
-            child: _InvoiceSummaryCard(
-              subTotal: subTotal,
-              deliveryFee: deliveryFee,
-              discount: discount,
-              totalCost: totalCost,
-              onApplyPromoCode: onApplyPromoCode,
-              onCheckout: () {
-                // 1. Close bottom sheet
-                Navigator.of(ctx).pop();
-                // 2. Navigate to full InvoiceScreen
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => ModernInvoiceScreen(
-                      items: items,
-                      subTotal: subTotal,
-                      deliveryFee: deliveryFee,
-                      discount: discount,
-                      totalCost: totalCost,
+            height: screenHeight * 0.30,
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient, // centralized gradient
+              borderRadius: BorderRadius.circular(AppRadius.large),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(2),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppRadius.large),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(
+                          top: AppSpacing.sm, bottom: AppSpacing.md),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
-                  ),
-                );
-              },
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: _InvoiceSummaryCard(
+                          subTotal: subTotal,
+                          deliveryFee: deliveryFee,
+                          discount: discount,
+                          totalCost: totalCost,
+                          onCheckout: () {
+                            Navigator.of(ctx).pop();
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => ModernInvoiceScreen(
+                                  items: items,
+                                  subTotal: subTotal,
+                                  deliveryFee: deliveryFee,
+                                  discount: discount,
+                                  totalCost: totalCost,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -130,13 +150,18 @@ class CartScreenUI extends StatelessWidget {
           centerTitle: true,
           actions: [
             IconButton(
-              icon: Icon(
-                CupertinoIcons.doc_text,
-                size: 30,
-              ),
-              color: AppColors.primary,
               tooltip: 'ملخص الفاتورة',
               onPressed: () => _showInvoiceSheet(context),
+              icon: ShaderMask(
+                shaderCallback: (bounds) =>
+                    AppColors.primaryGradient.createShader(bounds),
+                blendMode: BlendMode.srcIn,
+                child: const Icon(
+                  CupertinoIcons.doc_text,
+                  size: 30,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ],
         ),
@@ -159,7 +184,6 @@ class CartScreenUI extends StatelessWidget {
                     key: ValueKey(item.id),
                     direction: DismissDirection.endToStart,
                     onDismissed: (_) {
-                      final removedItem = item;
                       onRemoveItem(item.id);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -172,14 +196,16 @@ class CartScreenUI extends StatelessWidget {
                           action: SnackBarAction(
                             label: 'تراجع',
                             textColor: AppColors.textOnPrimary,
-                            onPressed: () => onUndoRemove(removedItem),
+                            onPressed: () => onUndoRemove(item),
                           ),
                         ),
                       );
                     },
                     background: Container(
                       margin: const EdgeInsets.symmetric(
-                          vertical: AppSpacing.sm, horizontal: AppSpacing.md),
+                        vertical: AppSpacing.sm,
+                        horizontal: AppSpacing.md,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.error,
                         borderRadius: BorderRadius.circular(AppRadius.normal),
@@ -219,104 +245,118 @@ class _ModernCartItemCard extends StatelessWidget {
       textDirection: TextDirection.rtl,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 242, 240, 240),
-          borderRadius: BorderRadius.circular(AppRadius.large),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.12),
-              blurRadius: 4,
-              offset: Offset(0, 6),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient, // centralized gradient
+            borderRadius: BorderRadius.circular(AppRadius.large),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(1.5),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(AppRadius.large),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.12),
+                    blurRadius: 4,
+                    offset: Offset(0, 6),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.all(AppSpacing.md),
+              child: Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(AppRadius.normal),
+                    child: Image.asset(
+                      item.imagePath,
+                      width: 94,
+                      height: 94,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.name,
+                          style: AppTextStyles.body1.copyWith(
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        Text(
+                          'السعر: ${item.price.toStringAsFixed(2)} ريال',
+                          style: TextStyle(
+                            fontFamily: AppTextStyles.fontFamily,
+                            fontSize: 13,
+                            color: AppColors.secondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: 40,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 22,
+                          height: 22,
+                          decoration: BoxDecoration(
+                            gradient: AppColors
+                                .primaryGradient, // centralized gradient
+                            borderRadius:
+                                BorderRadius.circular(AppRadius.small),
+                          ),
+                          child: IconButton(
+                            onPressed: () => onQuantityChanged(-1),
+                            icon: const Icon(Icons.remove, size: 16),
+                            color: Colors.white,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        Text(
+                          '${item.quantity}',
+                          style: TextStyle(
+                            fontFamily: AppTextStyles.fontFamily,
+                            fontSize: 15,
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        Container(
+                          width: 22,
+                          height: 22,
+                          decoration: BoxDecoration(
+                            gradient: AppColors
+                                .primaryGradient, // centralized gradient
+                            borderRadius:
+                                BorderRadius.circular(AppRadius.small),
+                          ),
+                          child: IconButton(
+                            onPressed: () => onQuantityChanged(1),
+                            icon: const Icon(Icons.add, size: 16),
+                            color: Colors.white,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(AppRadius.normal),
-                child: Image.asset(
-                  item.imagePath,
-                  width: 94,
-                  height: 94,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.name,
-                      style: AppTextStyles.body1.copyWith(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'السعر: ${item.price.toStringAsFixed(2)} ريال',
-                      style: TextStyle(
-                          fontFamily: AppTextStyles.fontFamily,
-                          fontSize: 13,
-                          color: AppColors.secondary),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Smaller outlined counter
-              Container(
-                height: 40,
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 22,
-                      height: 22,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(AppRadius.small),
-                      ),
-                      child: IconButton(
-                        onPressed: item.quantity > 1
-                            ? () => onQuantityChanged(-1)
-                            : null,
-                        icon: const Icon(Icons.remove, size: 16),
-                        color: Colors.white,
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Text(
-                      '${item.quantity}',
-                      style: TextStyle(
-                          fontFamily: AppTextStyles.fontFamily, fontSize: 15),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Container(
-                      width: 22,
-                      height: 22,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(AppRadius.small),
-                      ),
-                      child: IconButton(
-                        onPressed: () => onQuantityChanged(1),
-                        icon: const Icon(Icons.add, size: 16),
-                        color: Colors.white,
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
           ),
         ),
       ),
@@ -324,13 +364,11 @@ class _ModernCartItemCard extends StatelessWidget {
   }
 }
 
-/// ملخص الفاتورة (بدون Card Borders)
-class _InvoiceSummaryCard extends StatefulWidget {
+class _InvoiceSummaryCard extends StatelessWidget {
   final double subTotal;
   final double deliveryFee;
   final double discount;
   final double totalCost;
-  final void Function(String code) onApplyPromoCode;
   final VoidCallback onCheckout;
 
   const _InvoiceSummaryCard({
@@ -339,129 +377,57 @@ class _InvoiceSummaryCard extends StatefulWidget {
     required this.deliveryFee,
     required this.discount,
     required this.totalCost,
-    required this.onApplyPromoCode,
     required this.onCheckout,
   }) : super(key: key);
-
-  @override
-  State<_InvoiceSummaryCard> createState() => _InvoiceSummaryCardState();
-}
-
-class _InvoiceSummaryCardState extends State<_InvoiceSummaryCard> {
-  final TextEditingController _promoController = TextEditingController();
-  late FocusNode _focusNode;
-  bool _isFocused = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _focusNode = FocusNode()
-      ..addListener(() {
-        setState(() {
-          _isFocused = _focusNode.hasFocus;
-        });
-      });
-  }
-
-  @override
-  void dispose() {
-    _promoController.dispose();
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-  void _submitPromo() {
-    final code = _promoController.text.trim();
-    if (code.isNotEmpty) {
-      widget.onApplyPromoCode(code);
-      _promoController.clear();
-      FocusScope.of(context).unfocus();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md, vertical: AppSpacing.md),
+        padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(AppRadius.normal),
-                      boxShadow: _isFocused
-                          ? [
-                              BoxShadow(
-                                  color: AppColors.primary.withOpacity(0.25),
-                                  blurRadius: 12,
-                                  offset: Offset(0, 4))
-                            ]
-                          : [],
-                    ),
-                    child: SizedBox(
-                      height: 44,
-                      child: TextField(
-                        controller: _promoController,
-                        focusNode: _focusNode,
-                        textAlign: TextAlign.right,
-                        decoration: InputDecoration(
-                          hintText: 'أدخل رمز العرض',
-                          hintStyle: AppTextStyles.body2
-                              .copyWith(color: AppColors.textSecondary),
-                          filled: true,
-                          fillColor: AppColors.surface,
-                          border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.circular(AppRadius.normal),
-                              borderSide: BorderSide.none),
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.circular(AppRadius.normal),
-                              borderSide: BorderSide(
-                                  color: AppColors.primary, width: 2)),
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.sm,
-                              vertical: AppSpacing.sm),
-                        ),
-                        onSubmitted: (_) => _submitPromo(),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                SizedBox(
-                  width: 90,
-                  height: 44,
-                  child: AppButton(label: 'تطبيق', onPressed: _submitPromo),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-            _buildInvoiceRow('المجموع الفرعي', widget.subTotal),
+            _buildInvoiceRow('المجموع الفرعي', subTotal),
             const SizedBox(height: AppSpacing.sm),
-            _buildInvoiceRow('رسوم التوصيل', widget.deliveryFee),
+            _buildInvoiceRow('رسوم التوصيل', deliveryFee),
             const SizedBox(height: AppSpacing.sm),
-            if (widget.discount > 0) ...[
-              _buildInvoiceRow('الخصم', -widget.discount, isDiscount: true),
+            if (discount > 0) ...[
+              _buildInvoiceRow('الخصم', -discount, isDiscount: true),
               const SizedBox(height: AppSpacing.md),
             ],
             const Divider(
-                height: AppSpacing.md * 2,
-                thickness: 1.2,
-                color: AppColors.textSecondary),
-            _buildInvoiceRow('الإجمالي الكلي', widget.totalCost, isTotal: true),
+              height: AppSpacing.md * 2,
+              thickness: 1.2,
+              color: AppColors.textSecondary,
+            ),
+            _buildInvoiceRow('الإجمالي الكلي', totalCost, isTotal: true),
             const SizedBox(height: AppSpacing.md),
-            SizedBox(
-                height: 44,
-                child: AppButton(
-                    label: 'المتابعة إلى الدفع', onPressed: widget.onCheckout)),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient, // centralized gradient
+                borderRadius: BorderRadius.circular(AppRadius.normal),
+              ),
+              child: ElevatedButton(
+                onPressed: onCheckout,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  minimumSize: const Size(double.infinity, 44),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.normal),
+                  ),
+                ),
+                child: const Text(
+                  'المتابعة إلى الدفع',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -471,9 +437,8 @@ class _InvoiceSummaryCardState extends State<_InvoiceSummaryCard> {
   Widget _buildInvoiceRow(String label, double value,
       {bool isTotal = false, bool isDiscount = false}) {
     final colorText = isDiscount ? AppColors.primary : AppColors.textPrimary;
-    final valueText = isDiscount
-        ? '-\$${value.abs().toStringAsFixed(0)}'
-        : '\$${value.toStringAsFixed(0)}';
+    final formatted = '﷼${value.abs().toStringAsFixed(2)}';
+    final valueText = isDiscount ? '-$formatted' : formatted;
     final valueStyle = isTotal
         ? AppTextStyles.body1
             .copyWith(color: colorText, fontWeight: FontWeight.bold)

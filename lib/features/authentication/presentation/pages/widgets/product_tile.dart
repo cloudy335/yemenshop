@@ -8,11 +8,6 @@ import 'package:yemenshop/features/authentication/data/models/favorites.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/product_details_screen.dart';
 
 class ProductsSection extends StatelessWidget {
-  final List<FavoriteItem> products;
-  final void Function(FavoriteItem item) onAddToCart;
-  final List<FavoriteItem> favorites;
-  final void Function(FavoriteItem item) onToggleFavorite;
-
   const ProductsSection({
     Key? key,
     required this.products,
@@ -20,6 +15,11 @@ class ProductsSection extends StatelessWidget {
     required this.favorites,
     required this.onToggleFavorite,
   }) : super(key: key);
+
+  final List<FavoriteItem> products;
+  final void Function(FavoriteItem item) onAddToCart;
+  final List<FavoriteItem> favorites;
+  final void Function(FavoriteItem item) onToggleFavorite;
 
   bool _isFavorite(FavoriteItem item) => favorites.contains(item);
 
@@ -30,154 +30,25 @@ class ProductsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('المنتجات الأكثر مبيعًا', style: AppTextStyles.h2),
+          Text(
+            'المنتجات الأكثر مبيعًا',
+            style: AppTextStyles.h2.copyWith(color: AppColors.textPrimary),
+          ),
           const SizedBox(height: AppSpacing.md),
           MasonryGridView.count(
             crossAxisCount: 2,
-            mainAxisSpacing: AppSpacing.sm,
-            crossAxisSpacing: AppSpacing.sm,
+            mainAxisSpacing: AppSpacing.lg,
+            crossAxisSpacing: AppSpacing.lg,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: products.length,
             itemBuilder: (context, index) {
               final item = products[index];
-              final heights = [260.0, 240.0, 280.0, 220.0];
-              final imageHeight = heights[index % heights.length];
-
-              return InkWell(
-                borderRadius: BorderRadius.circular(AppRadius.normal),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ProductDetailsScreen(item: item),
-                    ),
-                  );
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(AppRadius.normal),
-                    boxShadow: const [
-                      BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 5,
-                          offset: Offset(0, 1)),
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 15,
-                        spreadRadius: -3,
-                        offset: Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Stack(
-                        children: [
-                          // Hero-wrapped Product Image
-                          ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(AppRadius.normal),
-                                bottom: Radius.circular(AppRadius.normal)),
-                            child: Hero(
-                              tag: item.id,
-                              child: Image.asset(
-                                item.imagePath,
-                                height: imageHeight,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-
-                          // Favorite button
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: CircleAvatar(
-                              backgroundColor: Colors.black54,
-                              child: IconButton(
-                                icon: Icon(
-                                  _isFavorite(item)
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () => onToggleFavorite(item),
-                              ),
-                            ),
-                          ),
-
-                          // Title / Price / Add-to-Cart overlay
-                          Positioned(
-                            bottom: 5,
-                            left: 5,
-                            right: 5,
-                            child: Container(
-                              padding: const EdgeInsets.all(AppSpacing.sm),
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.6),
-                                borderRadius: const BorderRadius.vertical(
-                                  bottom: Radius.circular(AppRadius.normal),
-                                  top: Radius.circular(AppRadius.normal),
-                                ),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Text(
-                                    item.title,
-                                    style: AppTextStyles.body1
-                                        .copyWith(color: Colors.white),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        item.price,
-                                        style: AppTextStyles.body1.copyWith(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 11,
-                                        ),
-                                      ),
-                                      InkWell(
-                                        borderRadius: BorderRadius.circular(
-                                            AppRadius.normal),
-                                        onTap: () => onAddToCart(item),
-                                        child: Container(
-                                          width: 52,
-                                          height: 32,
-                                          decoration: BoxDecoration(
-                                            color: AppColors.primary,
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          child: const Center(
-                                            child: Icon(
-                                              HugeIcons
-                                                  .strokeRoundedShoppingCart01,
-                                              color: Colors.white,
-                                              size: 20,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+              return _ModernProductCard(
+                item: item,
+                isFavorite: _isFavorite(item),
+                onToggleFavorite: () => onToggleFavorite(item),
+                onAddToCart: () => onAddToCart(item),
               );
             },
           ),
@@ -186,4 +57,132 @@ class ProductsSection extends StatelessWidget {
     );
   }
 }
-// lib/features/authentication/presentation/pages/product_details_screen.dart
+
+class _ModernProductCard extends StatelessWidget {
+  const _ModernProductCard({
+    Key? key,
+    required this.item,
+    required this.isFavorite,
+    required this.onToggleFavorite,
+    required this.onAddToCart,
+  }) : super(key: key);
+
+  final FavoriteItem item;
+  final bool isFavorite;
+  final VoidCallback onToggleFavorite;
+  final VoidCallback onAddToCart;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // 1) Image container with light grey outline & subtle shadow
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.grey.shade300, width: 1),
+            borderRadius: BorderRadius.circular(19),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 4,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(18),
+            child: Stack(
+              children: [
+                // taller card
+                AspectRatio(
+                  aspectRatio: 0.8,
+                  child: Image.asset(
+                    item.imagePath,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Material(
+                    color: Colors.white70,
+                    shape: const CircleBorder(),
+                    child: IconButton(
+                      icon: Icon(
+                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                        color:
+                            isFavorite ? Colors.red : AppColors.textSecondary,
+                      ),
+                      onPressed: onToggleFavorite,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // more vertical breathing room
+        const SizedBox(height: AppSpacing.md),
+
+        // 2) Title / price / add-to-cart row
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                item.title,
+                style: AppTextStyles.body1,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  // price painted with app’s primary gradient
+                  ShaderMask(
+                    shaderCallback: (bounds) =>
+                        AppColors.primaryGradient.createShader(bounds),
+                    blendMode: BlendMode.srcIn,
+                    child: Text(
+                      item.price,
+                      style: AppTextStyles.body1.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  // 3) “add to cart” button: filled green pill
+                  InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: onAddToCart,
+                    child: Container(
+                      width: 52,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          HugeIcons.strokeRoundedShoppingCart01,
+                          size: 20,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}

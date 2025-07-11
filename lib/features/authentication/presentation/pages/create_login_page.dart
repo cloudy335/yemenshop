@@ -38,7 +38,7 @@ class CreateLoginPageUI extends StatelessWidget {
 
               SizedBox(height: AppSpacing.xl * 5),
 
-              // Description with line spacing
+              // Description
               Text(
                 'انطلق في رحلة الذوق اليمني مع المتجر اليمني أول تطبيق في السعودية يجمع أفضل وأشهر المنتجات اليمنية الأصيلة مثل العسل الفاخر والبُن المختار',
                 textAlign: TextAlign.right,
@@ -54,24 +54,63 @@ class CreateLoginPageUI extends StatelessWidget {
               // Buttons Row
               Row(
                 children: [
-                  // Primary button with custom color
+                  // 1) تسجيل الدخول: filled gradient
                   Expanded(
-                    child: AppButton(
-                      label: 'تسجيل الدخول',
-                      backgroundColor: Colors.black, // New color
-                      onPressed: () {
-                        Navigator.pushNamed(context, AppRoutes.login);
-                      },
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: AppColors.primaryGradient,
+                        borderRadius: BorderRadius.circular(AppRadius.normal),
+                      ),
+                      child: AppButton(
+                        label: 'تسجيل الدخول',
+                        backgroundColor: Colors.transparent,
+                        onPressed: () {
+                          Navigator.pushNamed(context, AppRoutes.login);
+                        },
+                      ),
                     ),
                   ),
+
                   SizedBox(width: AppSpacing.lg),
-                  // Secondary button with default color
+
+                  // 2) إنشاء حساب: white fill, gradient outline, gradient text
                   Expanded(
-                    child: AppButton(
-                      label: 'انشاء حساب',
-                      onPressed: () {
-                        Navigator.pushNamed(context, AppRoutes.createAccount);
-                      },
+                    child: InkWell(
+                      onTap: () =>
+                          Navigator.pushNamed(context, AppRoutes.createAccount),
+                      borderRadius: BorderRadius.circular(AppRadius.normal),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: AppColors.primaryGradient,
+                          borderRadius: BorderRadius.circular(AppRadius.normal),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(2), // stroke width
+                          child: Container(
+                            height: 56,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.circular(AppRadius.normal),
+                            ),
+                            child: ShaderMask(
+                              blendMode: BlendMode.srcIn,
+                              shaderCallback: (bounds) => AppColors
+                                  .primaryGradient
+                                  .createShader(Rect.fromLTWH(
+                                      0, 0, bounds.width, bounds.height)),
+                              child: Text(
+                                'إنشاء حساب',
+                                style: AppTextStyles.body1.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ],

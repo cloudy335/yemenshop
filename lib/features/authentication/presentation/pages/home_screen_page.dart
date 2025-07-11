@@ -261,7 +261,6 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
             onQuantityChanged: _onQuantityChanged,
             onRemoveItem: _onRemoveItem,
             onUndoRemove: _onUndoRemove,
-            onApplyPromoCode: _onApplyPromoCode,
             onCheckout: _onCheckout,
           ),
           const ProfileScreen(),

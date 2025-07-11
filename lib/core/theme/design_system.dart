@@ -24,20 +24,22 @@ class AppColors {
   static const Color textSecondary = Color(0xFF757575);
   static const Color textOnPrimary = Color(0xFFFFFFFF);
 
+  /// The app’s main gradient
+  static const LinearGradient primaryGradient = LinearGradient(
+    colors: [
+      Color.fromARGB(255, 208, 231, 1), // Yellow
+      Color.fromARGB(255, 27, 192, 247), // Blue
+    ],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
   static var backgroundLight;
-
   static var primaryDark;
-
   static var primaryLight;
-
   static var onPrimary;
-
   static var text;
-
   static var card;
-
-  static var primaryGradient;
-
   static var border;
 }
 
@@ -52,13 +54,10 @@ class AppSpacing {
 
 /// Corner radii for a more modern, rounded look
 class AppRadius {
-  static const double small = 8.0; // A smaller radius for minor rounding
-  static const double normal =
-      16.0; // Standard radius for buttons and cards (previously 12.0)
-  static const double large =
-      32.0; // Larger radius for more noticeable rounding
-  static const double extraLarge =
-      48.0; // For high-impact design elements (optional)
+  static const double small = 8.0;
+  static const double normal = 16.0;
+  static const double large = 32.0;
+  static const double extraLarge = 48.0;
 }
 
 /// Elevation (shadow) levels
@@ -69,7 +68,6 @@ class AppElevation {
   static const double high = 8.0;
 
   static var small;
-
   static var large;
 }
 
@@ -118,11 +116,8 @@ class AppTextStyles {
   );
 
   static var h3;
-
   static var buttonText;
-
   static var titleMedium;
-
   static var button;
 }
 
@@ -134,7 +129,7 @@ class AppButtonStyles {
     minimumSize: const Size(double.infinity, 48),
     padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(AppRadius.normal), // Adjusted radius
+      borderRadius: BorderRadius.circular(AppRadius.normal),
     ),
     textStyle: const TextStyle(
       fontFamily: AppTextStyles.fontFamily,
@@ -149,7 +144,7 @@ class AppButtonStyles {
     minimumSize: const Size(double.infinity, 48),
     padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(AppRadius.normal), // Adjusted radius
+      borderRadius: BorderRadius.circular(AppRadius.normal),
     ),
     textStyle: const TextStyle(
       fontFamily: AppTextStyles.fontFamily,

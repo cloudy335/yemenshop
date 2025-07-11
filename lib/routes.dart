@@ -76,7 +76,6 @@ class AppRoutes {
             onQuantityChanged: (item, quantity) {},
             onRemoveItem: (item) {},
             onUndoRemove: (item) {},
-            onApplyPromoCode: (code) {},
             onCheckout: () {},
           ),
         );

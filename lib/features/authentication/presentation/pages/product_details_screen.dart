@@ -25,22 +25,73 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    const gradient = LinearGradient(
+      colors: [Colors.red, Colors.blue],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
+
+    Widget _gradientPrice(String priceText) {
+      return ShaderMask(
+        blendMode: BlendMode.srcIn,
+        shaderCallback: (bounds) => gradient
+            .createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+        child: Text(
+          priceText,
+          style: AppTextStyles.h2.copyWith(color: Colors.white),
+        ),
+      );
+    }
+
+    Widget _gradientBorderField({required Widget child}) {
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: gradient,
+          borderRadius: BorderRadius.circular(AppRadius.normal),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(1),
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(AppRadius.normal),
+            ),
+            child: child,
+          ),
+        ),
+      );
+    }
+
+    Widget _gradientIconContainer(
+        {required VoidCallback onTap, required IconData icon}) {
+      return InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadius.small),
+        child: Container(
+          width: 25,
+          height: 25,
+          decoration: BoxDecoration(
+            gradient: gradient,
+            borderRadius: BorderRadius.circular(AppRadius.small),
+          ),
+          child: Icon(icon, size: 16, color: Colors.white),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // 1. Full-screen product image
           Hero(
             tag: widget.item.id,
             child: Image.asset(
               widget.item.imagePath,
-              width: 500,
+              width: double.infinity,
               height: 600,
               fit: BoxFit.cover,
             ),
           ),
-
-          // 2. Top bar: back + favorite
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(AppSpacing.md),
@@ -66,8 +117,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               ),
             ),
           ),
-
-          // 3. Draggable panel
           DraggableScrollableSheet(
             initialChildSize: 0.55,
             minChildSize: 0.45,
@@ -84,13 +133,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     BoxShadow(
                       color: Colors.black26,
                       blurRadius: AppElevation.medium,
-                    )
+                    ),
                   ],
                 ),
                 child: Column(
                   children: [
                     const SizedBox(height: AppSpacing.sm),
-                    // drag handle
                     Center(
                       child: Container(
                         width: 40,
@@ -102,8 +150,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.lg),
-
-                    // scrollable content
                     Expanded(
                       child: SingleChildScrollView(
                         controller: scrollCtrl,
@@ -114,16 +160,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            // title & price
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  widget.item.price,
-                                  style: AppTextStyles.h2.copyWith(
-                                    color: AppColors.primary,
-                                  ),
-                                ),
+                                // Gradient-colored price text
+                                _gradientPrice(widget.item.price),
                                 Expanded(
                                   child: Text(
                                     widget.item.title,
@@ -138,8 +179,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ],
                             ),
                             const SizedBox(height: AppSpacing.md),
-
-                            // rating
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
@@ -156,70 +195,39 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ],
                             ),
                             const SizedBox(height: AppSpacing.lg),
-
-                            // quantity selector: outlined + smaller rounded square icons
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Container(
-                                  height: 45,
-
-                                  // remove fixed width so container expands as needed
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: AppSpacing.sm),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: AppColors.primary, width: 1),
-                                    borderRadius: BorderRadius.circular(
-                                      AppRadius.normal,
+                                // Quantity selector with gradient border
+                                _gradientBorderField(
+                                  child: Container(
+                                    height: 45,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: AppSpacing.sm),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        // Gradient minus button
+                                        _gradientIconContainer(
+                                          onTap: _decrement,
+                                          icon: Icons.remove,
+                                        ),
+                                        const SizedBox(width: AppSpacing.sm),
+                                        Text(
+                                          '$_quantity',
+                                          style: AppTextStyles.h2.copyWith(
+                                              color: AppColors.secondary),
+                                        ),
+                                        const SizedBox(width: AppSpacing.sm),
+                                        // Gradient plus button
+                                        _gradientIconContainer(
+                                          onTap: _increment,
+                                          icon: Icons.add,
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 25,
-                                        height: 25,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.primary,
-                                          borderRadius: BorderRadius.circular(
-                                              AppRadius.small),
-                                        ),
-                                        child: IconButton(
-                                          onPressed: _decrement,
-                                          icon: const Icon(Icons.remove,
-                                              size: 16),
-                                          color: Colors.white,
-                                          padding: EdgeInsets.zero,
-                                          constraints: const BoxConstraints(),
-                                        ),
-                                      ),
-                                      const SizedBox(width: AppSpacing.sm),
-                                      Text(
-                                        '$_quantity',
-                                        style: AppTextStyles.h2.copyWith(
-                                            color: AppColors.secondary),
-                                      ),
-                                      const SizedBox(width: AppSpacing.sm),
-                                      Container(
-                                        width: 25,
-                                        height: 25,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.primary,
-                                          borderRadius: BorderRadius.circular(
-                                              AppRadius.small),
-                                        ),
-                                        child: IconButton(
-                                          onPressed: _increment,
-                                          icon: const Icon(Icons.add, size: 16),
-                                          color: Colors.white,
-                                          padding: EdgeInsets.zero,
-                                          constraints: const BoxConstraints(),
-                                        ),
-                                      ),
-                                    ],
                                   ),
                                 ),
                                 Text(
@@ -234,8 +242,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ],
                             ),
                             const SizedBox(height: AppSpacing.lg),
-
-                            // description
                             Text(
                               'الوصف',
                               style: AppTextStyles.h2,
@@ -257,32 +263,35 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ),
                       ),
                     ),
-
-                    // pinned Add to Cart button (full width, no icon)
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.md,
                         vertical: AppSpacing.sm,
                       ),
-                      child: SizedBox(
+                      child: Container(
                         width: double.infinity,
+                        decoration: BoxDecoration(
+                          gradient: gradient,
+                          borderRadius: BorderRadius.circular(AppRadius.normal),
+                        ),
                         child: ElevatedButton(
                           onPressed: () {
                             // TODO: add widget.item with _quantity
                           },
-                          child: Text(
-                            'أضف  إلى السلة',
-                            style: AppTextStyles.body1.copyWith(
-                              color: AppColors.textOnPrimary,
-                            ),
-                          ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
                             padding: const EdgeInsets.symmetric(
                                 vertical: AppSpacing.md),
                             shape: RoundedRectangleBorder(
                               borderRadius:
                                   BorderRadius.circular(AppRadius.normal),
+                            ),
+                          ),
+                          child: Text(
+                            'أضف إلى السلة',
+                            style: AppTextStyles.body1.copyWith(
+                              color: AppColors.textOnPrimary,
                             ),
                           ),
                         ),

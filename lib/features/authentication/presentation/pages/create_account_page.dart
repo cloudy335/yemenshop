@@ -1,19 +1,64 @@
+// lib/features/authentication/presentation/pages/login_page.dart
 import 'package:flutter/material.dart';
-import 'package:yemenshop/core/theme/design_system.dart';
 import 'package:yemenshop/routes.dart';
+import 'package:yemenshop/core/theme/design_system.dart';
 
 class CreateAccountPageUI extends StatelessWidget {
   const CreateAccountPageUI({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // 1) Define the shared red→blue diagonal gradient
+    final gradient = const LinearGradient(
+      colors: [Colors.red, Colors.blue],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
+
+    // 2) Helper to build a TextField with a gradient border
+    Widget _gradientBorderField({
+      required String label,
+      bool obscure = false,
+      TextInputType? keyboardType,
+    }) {
+      return Container(
+        decoration: BoxDecoration(
+          gradient: gradient,
+          borderRadius: BorderRadius.circular(AppRadius.normal),
+        ),
+        padding: const EdgeInsets.all(1), // border thickness
+        child: TextField(
+          obscureText: obscure,
+          keyboardType: keyboardType,
+          textAlign: TextAlign.right,
+          textAlignVertical: TextAlignVertical.center,
+          style: const TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
+            fontSize: 14,
+            color: AppColors.textPrimary,
+          ),
+          decoration: AppInputStyles.defaultDecoration(label: label).copyWith(
+            filled: true,
+            fillColor: AppColors.surface,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppRadius.normal),
+              borderSide: BorderSide.none,
+            ),
+            labelStyle: const TextStyle(
+              fontFamily: AppTextStyles.fontFamily,
+              color: AppColors.textPrimary,
+              fontSize: 12,
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.surface,
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
-        automaticallyImplyLeading:
-            true, // Shows back button if there's a previous route
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => Navigator.of(context).pop(),
@@ -38,115 +83,48 @@ class CreateAccountPageUI extends StatelessWidget {
                 const SizedBox(height: AppSpacing.md),
 
                 // Title
-                const Text(
-                  'إنشاء حساب ',
-                  style: AppTextStyles.h2,
-                ),
+                const Text('إنشاء حساب', style: AppTextStyles.h2),
 
                 const SizedBox(height: AppSpacing.xl),
 
-                // Phone Field
-                TextField(
-                  textAlign: TextAlign.right,
-                  textAlignVertical: TextAlignVertical.center,
+                // Phone Field with gradient border
+                _gradientBorderField(
+                  label: 'رقم الهاتف',
                   keyboardType: TextInputType.phone,
-                  style: const TextStyle(
-                    fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 14,
-                    color: AppColors.textPrimary,
-                  ),
-                  decoration: AppInputStyles.defaultDecoration(
-                    label: 'رقم الهاتف',
-                  ).copyWith(
-                    filled: true,
-                    fillColor: AppColors.surface,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppRadius.normal),
-                      borderSide: const BorderSide(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    labelStyle: const TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        color: AppColors.textPrimary,
-                        fontSize: 12),
-                  ),
                 ),
 
                 const SizedBox(height: AppSpacing.lg),
 
-                // Create Password Field
-                TextField(
-                  textAlign: TextAlign.right,
-                  textAlignVertical: TextAlignVertical.center,
-                  obscureText: true,
-                  style: const TextStyle(
-                    fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 14,
-                    color: AppColors.textPrimary,
-                  ),
-                  decoration: AppInputStyles.defaultDecoration(
-                    label: 'إنشاء كلمة المرور',
-                  ).copyWith(
-                    filled: true,
-                    fillColor: AppColors.surface,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppRadius.normal),
-                      borderSide: const BorderSide(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    labelStyle: const TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        color: AppColors.textPrimary,
-                        fontSize: 12),
-                  ),
+                // Create Password Field with gradient border
+                _gradientBorderField(
+                  label: 'إنشاء كلمة المرور',
+                  obscure: true,
                 ),
 
                 const SizedBox(height: AppSpacing.lg),
 
-                // Confirm Password Field
-                TextField(
-                  textAlign: TextAlign.right,
-                  textAlignVertical: TextAlignVertical.center,
-                  obscureText: true,
-                  style: const TextStyle(
-                    fontFamily: AppTextStyles.fontFamily,
-                    fontSize: 14,
-                    color: AppColors.textPrimary,
-                  ),
-                  decoration: AppInputStyles.defaultDecoration(
-                    label: 'تأكيد كلمة المرور',
-                  ).copyWith(
-                    filled: true,
-                    fillColor: AppColors.surface,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppRadius.normal),
-                      borderSide: const BorderSide(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    labelStyle: const TextStyle(
-                        fontFamily: AppTextStyles.fontFamily,
-                        color: AppColors.textPrimary,
-                        fontSize: 12),
-                  ),
+                // Confirm Password Field with gradient border
+                _gradientBorderField(
+                  label: 'تأكيد كلمة المرور',
+                  obscure: true,
                 ),
 
                 const SizedBox(height: 70),
 
-                // Create Account button
-                SizedBox(
+                // Create Account button with gradient fill
+                Container(
                   width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: gradient,
+                    borderRadius: BorderRadius.circular(AppRadius.normal),
+                  ),
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(
-                          context,
-                          AppRoutes
-                              .otpRegistration); // Navigate to the OTP page
+                      Navigator.pushNamed(context, AppRoutes.otpRegistration);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
                       padding:
                           const EdgeInsets.symmetric(vertical: AppSpacing.md),
                       shape: RoundedRectangleBorder(
@@ -167,21 +145,28 @@ class CreateAccountPageUI extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.sm),
 
-                // Navigate to Login Page
+                // "Have an account? Login" link with gradient text
                 Align(
                   alignment: Alignment.center,
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/login');
-                    },
-                    style: TextButton.styleFrom(
+                  child: InkWell(
+                    onTap: () =>
+                        Navigator.pushReplacementNamed(context, '/login'),
+                    borderRadius: BorderRadius.circular(AppRadius.normal),
+                    child: Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-                      minimumSize: const Size(50, 30),
-                    ),
-                    child: const Text(
-                      'لديك حساب؟ تسجيل الدخول',
-                      style: AppTextStyles.caption,
+                      child: ShaderMask(
+                        blendMode: BlendMode.srcIn,
+                        shaderCallback: (bounds) => gradient.createShader(
+                          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                        ),
+                        child: const Text(
+                          'لديك حساب؟ تسجيل الدخول',
+                          style: TextStyle(
+                              fontFamily: AppTextStyles.fontFamily,
+                              fontSize: 13),
+                        ),
+                      ),
                     ),
                   ),
                 ),
