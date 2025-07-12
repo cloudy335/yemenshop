@@ -4,10 +4,9 @@ import 'package:geocoding/geocoding.dart';
 import 'package:yemenshop/core/theme/app_button.dart';
 import 'package:yemenshop/core/theme/design_system.dart';
 
-// نموذج العنوان
 class Address {
-  String name; // مثل "البيت"
-  String details; // النص الكامل للعنوان
+  String name;
+  String details;
   double lat;
   double lng;
 
@@ -36,12 +35,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String avatarUrl =
       "https://www.gravatar.com/avatar/placeholder?s=200&d=robohash";
 
-  // Notification Preferences (User Story 4)
+  // Notification Preferences
   bool notifyOffers = true;
   bool notifyOrders = true;
   bool notifyAccount = true;
 
-  // قائمة العناوين
   List<Address> userAddresses = [
     Address(
       name: "البيت",
@@ -140,7 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void showManageAddressesDialog() {
-    final parentContext = context; // هذا هو الحل للمشكلة!
+    final parentContext = context;
     showModalBottomSheet(
       context: parentContext,
       isScrollControlled: true,
@@ -232,12 +230,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 AppButton(
                   label: "إضافة عنوان جديد",
                   onPressed: () async {
-                    Navigator.pop(sheetContext); // أغلق الـ BottomSheet
+                    Navigator.pop(sheetContext);
                     final LatLng? selectedLatLng =
                         await Navigator.pushNamed(parentContext, '/map')
                             as LatLng?;
                     if (selectedLatLng != null) {
-                      // جلب العنوان بالتفصيل
                       List<Placemark> placemarks =
                           await placemarkFromCoordinates(
                         selectedLatLng.latitude,
@@ -365,6 +362,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void goToMyOrders() {
+    Navigator.pushNamed(context, '/orders');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -488,6 +489,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onTap: showNotificationPrefsDialog,
                         ),
                         const SizedBox(height: AppSpacing.sm),
+                        // هنا زر "طلباتي"
+                        ProfileOptionTile(
+                          icon: Icons.shopping_bag,
+                          title: 'طلباتي',
+                          onTap: goToMyOrders,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
                         ProfileOptionTile(
                           icon: Icons.logout,
                           title: 'تسجيل الخروج',
@@ -507,7 +515,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-// حقل بيانات بستايل موحد
 class _ProfileField extends StatelessWidget {
   final String label;
   final TextEditingController controller;

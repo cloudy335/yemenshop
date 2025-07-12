@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-// ... باقي الاستيرادات السابقة
+// ... باقي الاستيرادات الأساسية
+
+// استيراد صفحات التطبيق
 import 'package:yemenshop/features/authentication/presentation/pages/LocationPickerPage.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/cart_page.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/create_account_page.dart';
@@ -10,10 +12,13 @@ import 'package:yemenshop/features/authentication/presentation/pages/otp_page.da
 import 'package:yemenshop/features/authentication/presentation/pages/otp_reset_password.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/payment_done.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/reset_password.dart';
-import 'package:yemenshop/features/authentication/presentation/pages/splash_page.dart'; // أضف هذا لمسار شاشة الخريطة
+import 'package:yemenshop/features/authentication/presentation/pages/splash_page.dart';
+
+// استيراد صفحة الملف الشخصي وصفحة طلباتي
+import 'package:yemenshop/features/authentication/presentation/pages/profile_screen.dart';
+import 'package:yemenshop/features/authentication/presentation/pages/orders_page.dart';
 
 class AppRoutes {
-  // Define all your route constants here
   static const String splash = '/splash';
   static const String introduction = '/introduction';
   static const String createLogin = '/';
@@ -25,8 +30,9 @@ class AppRoutes {
   static const String home = '/home';
   static const String cart = '/cart';
   static const String map = '/map';
-
-  static String paymentSuccess = '/payment-success'; // <--- أضفت هذا
+  static const String profile = '/profile';
+  static const String orders = '/orders';
+  static String paymentSuccess = '/payment-success';
 
   static Route<dynamic> generate(RouteSettings settings) {
     switch (settings.name) {
@@ -34,37 +40,42 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const YemenShopSplashScreen());
 
       case createLogin:
-        return MaterialPageRoute(
-          builder: (_) => const CreateLoginPageUI(),
-        );
+        return MaterialPageRoute(builder: (_) => const CreateLoginPageUI());
+
       case login:
         return MaterialPageRoute(
           builder: (_) => const LoginPageUI(),
           fullscreenDialog: true,
         );
+
       case createAccount:
         return MaterialPageRoute(
           builder: (_) => const CreateAccountPageUI(),
           fullscreenDialog: true,
         );
+
       case otpRegistration:
         return MaterialPageRoute(
           builder: (_) => OTPPageUI(),
           fullscreenDialog: true,
         );
+
       case otpReset:
         return MaterialPageRoute(
           builder: (_) => OTPVerificationScreen(),
           fullscreenDialog: true,
         );
+
       case resetPassword:
         return MaterialPageRoute(
           builder: (_) => const ResetPasswordScreen(),
         );
+
       case home:
         return MaterialPageRoute(
           builder: (_) => YemenShopHomeScreen(),
         );
+
       case cart:
         return MaterialPageRoute(
           builder: (_) => CartScreenUI(
@@ -79,16 +90,27 @@ class AppRoutes {
             onCheckout: () {},
           ),
         );
-      case map: // <-- شاشة الخريطة
+
+      case map:
         return MaterialPageRoute(
-          builder: (_) =>
-              const LocationPickerPage(), // غيرها إلى اسم صفحة الخريطة عندك إذا اختلف
+          builder: (_) => const LocationPickerPage(),
         );
+
+      case profile:
+        return MaterialPageRoute(
+          builder: (_) => const ProfileScreen(),
+        );
+
+      case orders:
+        return MaterialPageRoute(
+          builder: (_) => const OrdersPage(),
+        );
+
       case '/payment-success':
         return MaterialPageRoute(
-          builder: (_) =>
-              const PaymentSuccessScreen(), // تأكد من استيراد الصفحة
+          builder: (_) => const PaymentSuccessScreen(),
         );
+
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
