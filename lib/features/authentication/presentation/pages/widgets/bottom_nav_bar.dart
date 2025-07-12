@@ -16,19 +16,6 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Build a TextStyle that uses the app's primary gradient shader
-    TextStyle gradientLabelStyle(double fontSize, FontWeight weight) {
-      return AppTextStyles.body2.copyWith(
-        fontSize: fontSize,
-        fontWeight: weight,
-        foreground: Paint()
-          ..shader = AppColors.primaryGradient.createShader(
-            // small rect; width doesn't have to match exactly
-            const Rect.fromLTWH(0, 0, 100, 0),
-          ),
-      );
-    }
-
     return Container(
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: Colors.grey.shade300, width: 1)),
@@ -40,8 +27,21 @@ class BottomNavBar extends StatelessWidget {
         backgroundColor: AppColors.surface,
         showUnselectedLabels: true,
         elevation: 0,
-        selectedLabelStyle: gradientLabelStyle(12, FontWeight.bold),
-        unselectedLabelStyle: gradientLabelStyle(10, FontWeight.normal),
+
+        // Make all labels black or secondary black when unselected
+        selectedItemColor: AppColors.textPrimary,
+        unselectedItemColor: AppColors.textSecondary,
+        selectedLabelStyle: AppTextStyles.body2.copyWith(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
+        unselectedLabelStyle: AppTextStyles.body2.copyWith(
+          fontSize: 10,
+          fontWeight: FontWeight.normal,
+          color: AppColors.textSecondary,
+        ),
+
         items: [
           _buildItem(HugeIcons.strokeRoundedSetting06, 'الإعدادات', 0),
           _buildItem(

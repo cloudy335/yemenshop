@@ -34,21 +34,30 @@ class ProductsSection extends StatelessWidget {
             'المنتجات الأكثر مبيعًا',
             style: AppTextStyles.h2.copyWith(color: AppColors.textPrimary),
           ),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: 1),
           MasonryGridView.count(
             crossAxisCount: 2,
             mainAxisSpacing: AppSpacing.lg,
-            crossAxisSpacing: AppSpacing.lg,
+            crossAxisSpacing: AppSpacing.md,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: products.length,
             itemBuilder: (context, index) {
               final item = products[index];
-              return _ModernProductCard(
-                item: item,
-                isFavorite: _isFavorite(item),
-                onToggleFavorite: () => onToggleFavorite(item),
-                onAddToCart: () => onAddToCart(item),
+              return GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ProductDetailsScreen(item: item),
+                    ),
+                  );
+                },
+                child: _ModernProductCard(
+                  item: item,
+                  isFavorite: _isFavorite(item),
+                  onToggleFavorite: () => onToggleFavorite(item),
+                  onAddToCart: () => onAddToCart(item),
+                ),
               );
             },
           ),
@@ -87,7 +96,7 @@ class _ModernProductCard extends StatelessWidget {
               BoxShadow(
                 color: Colors.black12,
                 blurRadius: 4,
-                offset: Offset(0, 2),
+                offset: const Offset(0, 2),
               ),
             ],
           ),
@@ -95,7 +104,6 @@ class _ModernProductCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             child: Stack(
               children: [
-                // taller card
                 AspectRatio(
                   aspectRatio: 0.8,
                   child: Image.asset(
@@ -125,10 +133,10 @@ class _ModernProductCard extends StatelessWidget {
           ),
         ),
 
-        // more vertical breathing room
+        // 2) Add extra breathing room before details
         const SizedBox(height: AppSpacing.md),
 
-        // 2) Title / price / add-to-cart row
+        // Title / price / add-to-cart row
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
           child: Column(
@@ -143,7 +151,7 @@ class _ModernProductCard extends StatelessWidget {
               const SizedBox(height: 4),
               Row(
                 children: [
-                  // price painted with app’s primary gradient
+                  // Price painted with app’s primary gradient
                   ShaderMask(
                     shaderCallback: (bounds) =>
                         AppColors.primaryGradient.createShader(bounds),
@@ -157,7 +165,7 @@ class _ModernProductCard extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  // 3) “add to cart” button: filled green pill
+                  // “Add to cart” button: filled green pill
                   InkWell(
                     borderRadius: BorderRadius.circular(16),
                     onTap: onAddToCart,

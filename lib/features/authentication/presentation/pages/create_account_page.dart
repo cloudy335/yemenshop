@@ -8,14 +8,10 @@ class CreateAccountPageUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1) Define the shared red→blue diagonal gradient
-    final gradient = const LinearGradient(
-      colors: [Colors.red, Colors.blue],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    );
+    // Use the centralized primary gradient
+    final gradient = AppColors.primaryGradient;
 
-    // 2) Helper to build a TextField with a gradient border
+    // Helper to build a TextField with a gradient border
     Widget _gradientBorderField({
       required String label,
       bool obscure = false,
@@ -153,13 +149,12 @@ class CreateAccountPageUI extends StatelessWidget {
                         Navigator.pushReplacementNamed(context, '/login'),
                     borderRadius: BorderRadius.circular(AppRadius.normal),
                     child: Padding(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                       child: ShaderMask(
                         blendMode: BlendMode.srcIn,
                         shaderCallback: (bounds) => gradient.createShader(
-                          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                        ),
+                            Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
                         child: const Text(
                           'لديك حساب؟ تسجيل الدخول',
                           style: TextStyle(

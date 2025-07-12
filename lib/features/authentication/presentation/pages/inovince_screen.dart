@@ -57,14 +57,88 @@ class ModernInvoiceScreen extends StatelessWidget {
               // space before invoice card
               const SizedBox(height: 80),
 
-              // (2) INVOICE SUMMARY CARD — thicker outline (3px)
               DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: AppColors.primaryGradient,
-                  borderRadius: BorderRadius.circular(AppRadius.large * 1.2),
+                  borderRadius: BorderRadius.circular(AppRadius.normal * 1.2),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(1.5), // thicker border
+                  padding: const EdgeInsets.all(2),
+                  child: Container(
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(AppRadius.normal),
+                    ),
+                    child: Row(
+                      // <— Force left-to-right child ordering
+                      textDirection: TextDirection.ltr,
+                      children: [
+                        // “تطبيق” button on the left
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.sm),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              height: 36,
+                              width: 60,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.sm),
+                              decoration: BoxDecoration(
+                                gradient: AppColors.primaryGradient,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              alignment: Alignment.center,
+                              child: const Text(
+                                'تطبيق',
+                                style: TextStyle(
+                                  fontFamily: AppTextStyles.fontFamily,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Input field on the right
+                        Expanded(
+                          child: TextField(
+                            textAlign: TextAlign.right,
+                            textAlignVertical: TextAlignVertical.center,
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.sm,
+                                vertical: AppSpacing.sm,
+                              ),
+                              hintText: 'أدخل رمز الخصم',
+                              hintStyle: const TextStyle(
+                                fontFamily: AppTextStyles.fontFamily,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF999797),
+                              ),
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              // (2) INVOICE SUMMARY CARD — thicker outline (3px)
+              const SizedBox(height: 30),
+
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  borderRadius: BorderRadius.circular(AppRadius.normal * 1.2),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(1.5),
                   child: Container(
                     decoration: BoxDecoration(
                       boxShadow: [
@@ -76,7 +150,7 @@ class ModernInvoiceScreen extends StatelessWidget {
                       ],
                       color: Colors.white,
                       borderRadius:
-                          BorderRadius.circular(AppRadius.large * 1.2),
+                          BorderRadius.circular(AppRadius.normal * 1.2),
                     ),
                     padding: const EdgeInsets.all(AppSpacing.md),
                     child: Column(
@@ -98,46 +172,12 @@ class ModernInvoiceScreen extends StatelessWidget {
               ),
 
               // extra spacing before promo input
-              const SizedBox(height: 30),
 
-              // (3) Promo code input — thicker outline (3px)
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: AppColors.primaryGradient,
-                  borderRadius: BorderRadius.circular(AppRadius.normal * 1.2),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(2),
-                  child: Container(
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(AppRadius.normal),
-                    ),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-                    child: TextField(
-                      textAlignVertical: TextAlignVertical.center,
-                      decoration: InputDecoration(
-                        hintText: 'أدخل رمز الخصم',
-                        hintStyle: const TextStyle(
-                          fontFamily: AppTextStyles.fontFamily,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF999797),
-                        ),
-                        border: InputBorder.none,
-                        suffix: TextButton(
-                          onPressed: () {},
-                          child: Text('تطبيق', style: AppTextStyles.body2),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              // (3) Promo code input — gradient outline, hint right, apply button on left
+              // … inside build(), replace the promo section with:
 
-              // bottom padding so content won't be hidden
+// (3) Promo code input — gradient outline, hint right, apply button always on left
+
               SizedBox(height: AppSpacing.xl * 2),
             ],
           ),
@@ -171,7 +211,7 @@ class ModernInvoiceScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'تأكيد الدفع',
                 style: TextStyle(
                   fontFamily: AppTextStyles.fontFamily,
