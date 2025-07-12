@@ -279,40 +279,39 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
       ),
       child: Scaffold(
         backgroundColor: AppColors.surface,
-        body: Column(
+        body: IndexedStack(
+          index: _selectedIndex,
           children: [
-            SizedBox(height: MediaQuery.of(context).padding.top),
-            Expanded(
-              child: IndexedStack(
-                index: _selectedIndex,
-                children: [
-                  const SettingsScreen(),
-                  FavoritesScreen(
-                    favorites: _favorites,
-                    onToggleFavorite: _toggleFavorite,
-                  ),
-                  _buildHomeContent(),
-                  CartScreenUI(
-                    items: _cartItems,
-                    subTotal: _cartItems.fold(
-                      0.0,
-                      (sum, item) => sum + (item.price * item.quantity),
-                    ),
-                    deliveryFee: 0.0,
-                    discount: 0.0,
-                    totalCost: _cartItems.fold(
-                      0.0,
-                      (sum, item) => sum + (item.price * item.quantity),
-                    ),
-                    onQuantityChanged: _onQuantityChanged,
-                    onRemoveItem: _onRemoveItem,
-                    onUndoRemove: _onUndoRemove,
-                    onCheckout: _onCheckout,
-                  ),
-                  const ProfileScreen(),
-                ],
-              ),
+            const SettingsScreen(),
+            FavoritesScreen(
+              favorites: _favorites,
+              onToggleFavorite: _toggleFavorite,
             ),
+            // Home only: add top padding for status bar
+            Column(
+              children: [
+                SizedBox(height: MediaQuery.of(context).padding.top),
+                Expanded(child: _buildHomeContent()),
+              ],
+            ),
+            CartScreenUI(
+              items: _cartItems,
+              subTotal: _cartItems.fold(
+                0.0,
+                (sum, item) => sum + (item.price * item.quantity),
+              ),
+              deliveryFee: 0.0,
+              discount: 0.0,
+              totalCost: _cartItems.fold(
+                0.0,
+                (sum, item) => sum + (item.price * item.quantity),
+              ),
+              onQuantityChanged: _onQuantityChanged,
+              onRemoveItem: _onRemoveItem,
+              onUndoRemove: _onUndoRemove,
+              onCheckout: _onCheckout,
+            ),
+            const ProfileScreen(),
           ],
         ),
         bottomNavigationBar: BottomNavBar(

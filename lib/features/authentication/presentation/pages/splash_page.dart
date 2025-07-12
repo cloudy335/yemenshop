@@ -56,7 +56,7 @@ class _YemenShopSplashScreenState extends State<YemenShopSplashScreen>
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.surface,
         body: Center(
           child: FadeTransition(
             opacity: _fadeAnimation,
@@ -81,7 +81,7 @@ class _YemenShopSplashScreenState extends State<YemenShopSplashScreen>
                 Text(
                   'المتجر اليمني',
                   style: AppTextStyles.h2.copyWith(
-                    color: AppColors.primary,
+                    color: AppColors.secondary,
                     fontWeight: FontWeight.w300,
                   ),
                 ),

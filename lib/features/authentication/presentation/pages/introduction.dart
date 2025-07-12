@@ -60,7 +60,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.surface,
         body: SafeArea(
           child: Column(
             children: [
@@ -81,13 +81,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
+                          // الصورة بدون حاوية ملونة
+                          SizedBox(
                             width: 290,
                             height: 290,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: AppColors.background,
-                            ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(20),
                               child: Image.asset(
@@ -104,13 +101,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             ),
                           ),
                           const SizedBox(height: AppSpacing.xl),
-                          Text(
-                            slide.title,
-                            style: AppTextStyles.h1.copyWith(
-                              color: AppColors.textPrimary,
-                              fontSize: 24,
+                          // عنوان متدرج اللون
+                          ShaderMask(
+                            shaderCallback: (bounds) {
+                              return AppColors.primaryGradient.createShader(
+                                Rect.fromLTWH(
+                                    0, 0, bounds.width, bounds.height),
+                              );
+                            },
+                            child: Text(
+                              slide.title,
+                              style: AppTextStyles.h1.copyWith(
+                                color: Colors.white, // ضروري للتدرج
+                                fontSize: 24,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: AppSpacing.md),
                           Padding(
@@ -131,31 +137,30 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),
-              Directionality(
-                textDirection: TextDirection.rtl,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(_data.length, (i) {
-                    final distance = (i - _currentPageValue).abs();
-                    final scale = 1.0 - distance.clamp(0.0, 1.0);
-
-                    return AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      margin:
-                          const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-                      width: 8.0 + 4.0 * scale,
-                      height: AppSpacing.sm,
-                      decoration: BoxDecoration(
-                        color: Color.lerp(
-                          AppColors.primary.withOpacity(0.2),
-                          AppColors.primary,
-                          scale,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    );
-                  }),
-                ),
+              // نقاط PageView بالتدرج
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(_data.length, (i) {
+                  final distance = (i - _currentPageValue).abs();
+                  final scale = 1.0 - distance.clamp(0.0, 1.0);
+                  final colors = AppColors.primaryGradient.colors;
+                  final color = Color.lerp(
+                    colors.first,
+                    colors.last,
+                    i / (_data.length - 1),
+                  )!;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                    width: 8.0 + 4.0 * scale,
+                    height: AppSpacing.sm,
+                    decoration: BoxDecoration(
+                      color: color.withOpacity(0.7 + 0.3 * scale),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  );
+                }),
               ),
               const SizedBox(height: AppSpacing.xl),
               Padding(
@@ -169,7 +174,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             curve: Curves.easeInOut,
                           )
                       : _goHome,
-                  backgroundColor: AppColors.primary,
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),

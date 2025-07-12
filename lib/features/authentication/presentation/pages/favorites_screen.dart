@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // for SystemUiOverlayStyle
+import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:hugeicons/hugeicons.dart';
-
 import 'package:yemenshop/core/theme/design_system.dart';
 import 'package:yemenshop/features/authentication/data/models/favorites.dart';
+import 'package:yemenshop/features/authentication/presentation/pages/product_details_screen.dart'; // <-- Import details screen
 
 class FavoritesScreen extends StatelessWidget {
   final List<FavoriteItem> favorites;
   final void Function(FavoriteItem) onToggleFavorite;
+  final void Function(FavoriteItem)? onAddToCart; // Optional
 
   const FavoritesScreen({
     Key? key,
     required this.favorites,
     required this.onToggleFavorite,
+    this.onAddToCart,
   }) : super(key: key);
 
   @override
@@ -21,15 +23,14 @@ class FavoritesScreen extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.surface, // pure white
+        backgroundColor: AppColors.surface,
         appBar: AppBar(
-          // Force a fully white background, overriding any theme:
           backgroundColor: AppColors.surface,
           foregroundColor: AppColors.textPrimary,
-          systemOverlayStyle:
-              SystemUiOverlayStyle.dark, // status bar icons dark
-          elevation: 0, // no shadow
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          elevation: 0,
           automaticallyImplyLeading: false,
+          centerTitle: true,
           title: Text(
             'المفضلة',
             style: AppTextStyles.h2.copyWith(color: AppColors.textPrimary),
@@ -48,16 +49,33 @@ class FavoritesScreen extends StatelessWidget {
                 child: MasonryGridView.builder(
                   gridDelegate:
                       const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2),
-                  mainAxisSpacing: AppSpacing.sm,
-                  crossAxisSpacing: AppSpacing.sm,
+                    crossAxisCount: 2,
+                  ),
+                  mainAxisSpacing: AppSpacing.xl,
+                  crossAxisSpacing: AppSpacing.lg,
                   itemCount: favorites.length,
                   itemBuilder: (context, index) {
                     final item = favorites[index];
-                    return _FavoriteCard(
+                    return ModernProductCard(
                       item: item,
-                      index: index,
-                      onToggle: onToggleFavorite,
+                      isFavorite: true,
+                      onToggleFavorite: () => onToggleFavorite(item),
+                      onAddToCart: onAddToCart != null
+                          ? () => onAddToCart!(item)
+                          : () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text('تمت الإضافة إلى السلة')),
+                              );
+                            },
+                      // Navigation to details screen on tap
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => ProductDetailsScreen(item: item),
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
@@ -67,119 +85,127 @@ class FavoritesScreen extends StatelessWidget {
   }
 }
 
-class _FavoriteCard extends StatelessWidget {
+class ModernProductCard extends StatelessWidget {
   final FavoriteItem item;
-  final int index;
-  final void Function(FavoriteItem) onToggle;
+  final bool isFavorite;
+  final VoidCallback onToggleFavorite;
+  final VoidCallback onAddToCart;
+  final VoidCallback? onTap;
 
-  const _FavoriteCard({
+  const ModernProductCard({
     Key? key,
     required this.item,
-    required this.index,
-    required this.onToggle,
+    required this.isFavorite,
+    required this.onToggleFavorite,
+    required this.onAddToCart,
+    this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Cycle through heights for a staggered (Pinterest) look
-    final heights = [260.0, 240.0, 280.0, 220.0];
-    final imageHeight = heights[index % heights.length];
-
-    return Container(
-      decoration: AppCardStyles.card,
+    return GestureDetector(
+      onTap: onTap,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(AppRadius.normal),
-                    bottom: Radius.circular(AppRadius.normal)),
-                child: Image.asset(
-                  item.imagePath,
-                  height: imageHeight,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: Colors.grey.shade300, width: 1),
+              borderRadius: BorderRadius.circular(19),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
                 ),
-              ),
-              Positioned(
-                top: AppSpacing.sm,
-                right: AppSpacing.sm,
-                child: CircleAvatar(
-                  backgroundColor: Colors.black54,
-                  radius: 16,
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.favorite,
-                      color: Colors.red,
-                      size: 16,
-                    ),
-                    onPressed: () => onToggle(item),
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: AppSpacing.xs,
-                left: AppSpacing.xs,
-                right: AppSpacing.xs,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.sm,
-                    vertical: AppSpacing.xs,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.6),
-                    borderRadius: const BorderRadius.vertical(
-                      bottom: Radius.circular(AppRadius.normal),
-                      top: Radius.circular(AppRadius.normal),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(18),
+              child: Stack(
+                children: [
+                  AspectRatio(
+                    aspectRatio: 0.8,
+                    child: Image.asset(
+                      item.imagePath,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        item.title,
-                        style: AppTextStyles.body1.copyWith(
-                          color: AppColors.textOnPrimary,
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Material(
+                      color: Colors.white70,
+                      shape: const CircleBorder(),
+                      child: IconButton(
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color:
+                              isFavorite ? Colors.red : AppColors.textSecondary,
                         ),
-                        overflow: TextOverflow.ellipsis,
+                        onPressed: onToggleFavorite,
+                        constraints: const BoxConstraints(),
                       ),
-                      const SizedBox(height: 15),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            item.price,
-                            style: AppTextStyles.body2.copyWith(
-                              color: AppColors.textOnPrimary,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
-                          Container(
-                            width: 48,
-                            height: 28,
-                            decoration: BoxDecoration(
-                              color: AppColors.success,
-                              borderRadius:
-                                  BorderRadius.circular(AppRadius.small),
-                            ),
-                            child: const Icon(
-                              HugeIcons.strokeRoundedShoppingCart01,
-                              color: AppColors.textOnPrimary,
-                              size: 18,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.title,
+                  style: AppTextStyles.body1,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    // Price with gradient
+                    ShaderMask(
+                      shaderCallback: (bounds) =>
+                          AppColors.primaryGradient.createShader(bounds),
+                      blendMode: BlendMode.srcIn,
+                      child: Text(
+                        item.price,
+                        style: AppTextStyles.body1.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    // Add to cart button
+                    InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: onAddToCart,
+                      child: Container(
+                        width: 52,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            HugeIcons.strokeRoundedShoppingCart01,
+                            size: 20,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
