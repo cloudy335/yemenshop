@@ -6,6 +6,8 @@ class AppBarContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
@@ -23,16 +25,23 @@ class AppBarContent extends StatelessWidget {
               child: Container(
                 height: 40,
                 decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.textSecondary, width: 1),
+                  border: Border.all(
+                      color: theme.colorScheme.onBackground.withOpacity(0.3),
+                      width: 1),
                   borderRadius: BorderRadius.circular(AppRadius.normal),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                 child: Row(
                   textDirection: TextDirection.rtl,
-                  children: const [
-                    Icon(Icons.search, color: AppColors.textSecondary),
-                    SizedBox(width: AppSpacing.sm),
-                    Text('ابحث', style: AppTextStyles.body2),
+                  children: [
+                    Icon(Icons.search,
+                        color: theme.colorScheme.onBackground.withOpacity(0.7)),
+                    const SizedBox(width: AppSpacing.sm),
+                    Text('ابحث',
+                        style: AppTextStyles.body2.copyWith(
+                          color:
+                              theme.colorScheme.onBackground.withOpacity(0.7),
+                        )),
                   ],
                 ),
               ),

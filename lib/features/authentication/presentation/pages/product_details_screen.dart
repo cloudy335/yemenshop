@@ -22,12 +22,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final gradient = AppColors.primaryGradient;
 
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.scaffoldBackgroundColor,
         body: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,18 +62,21 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       top: AppSpacing.md,
                       left: AppSpacing.md,
                       child: CircleAvatar(
-                        backgroundColor: Colors.white70,
-                        child: BackButton(color: AppColors.textPrimary),
+                        backgroundColor:
+                            theme.colorScheme.surface.withOpacity(0.8),
+                        child:
+                            BackButton(color: theme.colorScheme.onBackground),
                       ),
                     ),
                     Positioned(
                       top: AppSpacing.md,
                       right: AppSpacing.md,
                       child: CircleAvatar(
-                        backgroundColor: Colors.white70,
+                        backgroundColor:
+                            theme.colorScheme.surface.withOpacity(0.8),
                         child: IconButton(
                           icon: Icon(Icons.favorite_border,
-                              color: AppColors.textPrimary),
+                              color: theme.colorScheme.onBackground),
                           onPressed: () {},
                         ),
                       ),
@@ -85,7 +89,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(AppSpacing.md),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: theme.colorScheme.surface,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black12,
@@ -107,13 +111,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   fontFamily: AppTextStyles.fontFamily,
                                   fontSize: 26,
                                   fontWeight: FontWeight.bold,
+                                  color: theme.colorScheme.onBackground,
                                 )),
                           ),
                           Row(
                             children: [
                               _qtyBtn(Icons.remove, _decrement),
                               const SizedBox(width: 8),
-                              Text('$_quantity', style: AppTextStyles.h2),
+                              Text('$_quantity',
+                                  style: AppTextStyles.h2.copyWith(
+                                    color: theme.colorScheme.onBackground,
+                                  )),
                               const SizedBox(width: 8),
                               _qtyBtn(Icons.add, _increment),
                             ],
@@ -128,23 +136,32 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         children: [
                           Icon(Icons.star, size: 20, color: AppColors.warning),
                           const SizedBox(width: 4),
-                          Text('4.7', style: AppTextStyles.caption),
+                          Text('4.7',
+                              style: AppTextStyles.caption.copyWith(
+                                color: theme.colorScheme.onBackground,
+                              )),
                           const SizedBox(width: 8),
-                          Text('(5,471 مراجعة)', style: AppTextStyles.caption),
+                          Text('(5,471 مراجعة)',
+                              style: AppTextStyles.caption.copyWith(
+                                color: theme.colorScheme.onBackground,
+                              )),
                         ],
                       ),
 
                       const SizedBox(height: AppSpacing.md),
 
                       // Description
-                      Text('الوصف', style: AppTextStyles.h2),
+                      Text('الوصف',
+                          style: AppTextStyles.h2.copyWith(
+                            color: theme.colorScheme.onBackground,
+                          )),
                       const SizedBox(height: AppSpacing.sm),
                       Text(
                         'استمتع بمذاق القهوة الغنية والفاخرة التي تم اختيار حبوبها بعناية من أجود مزارع البن. محمصة بدقة لتمنحك نكهة عميقة ومتوازنة مع لمسات عطرية رائعة تدوم طويلًا. مثالية لتبدأ بها يومك أو لترافق أوقاتك المميزة.',
                         style: TextStyle(
                           fontFamily: AppTextStyles.fontFamily,
                           fontSize: 13,
-                          color: AppColors.textSecondary,
+                          color: theme.colorScheme.onBackground,
                         ),
                       ),
 
@@ -154,7 +171,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       Text('المميزات',
                           style: TextStyle(
                               fontFamily: AppTextStyles.fontFamily,
-                              fontSize: 19)),
+                              fontSize: 19,
+                              color: theme.colorScheme.onBackground)),
                       const SizedBox(height: AppSpacing.sm),
                       _bullet('جودة عالية'),
                       _bullet('مقاوم للاهتراء'),

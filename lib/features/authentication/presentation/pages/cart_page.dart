@@ -58,6 +58,8 @@ class CartScreenUI extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) {
+        final theme = Theme.of(ctx);
+
         return Padding(
           padding:
               EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
@@ -77,7 +79,7 @@ class CartScreenUI extends StatelessWidget {
               padding: const EdgeInsets.all(2),
               child: Container(
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(AppRadius.large),
                 ),
                 child: Column(
@@ -89,7 +91,7 @@ class CartScreenUI extends StatelessWidget {
                       margin: const EdgeInsets.only(
                           top: AppSpacing.sm, bottom: AppSpacing.md),
                       decoration: BoxDecoration(
-                        color: Colors.grey[300],
+                        color: theme.colorScheme.onBackground.withOpacity(0.3),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -129,23 +131,26 @@ class CartScreenUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: theme.appBarTheme.backgroundColor,
           elevation: 0,
           leading: IconButton(
             icon: Icon(
               Platform.isIOS ? Icons.arrow_back_ios_new : Icons.arrow_back,
-              color: AppColors.textPrimary,
+              color: theme.colorScheme.onBackground,
             ),
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
             'سلتي',
-            style: AppTextStyles.h2.copyWith(color: AppColors.textPrimary),
+            style: AppTextStyles.h2
+                .copyWith(color: theme.colorScheme.onBackground),
           ),
           centerTitle: true,
           actions: [
@@ -170,7 +175,7 @@ class CartScreenUI extends StatelessWidget {
                 child: Text(
                   'سلتك فارغة حالياً.',
                   style: AppTextStyles.body2
-                      .copyWith(color: AppColors.textSecondary),
+                      .copyWith(color: theme.colorScheme.onBackground),
                   textAlign: TextAlign.right,
                 ),
               )
@@ -241,6 +246,8 @@ class _ModernCartItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Container(
@@ -254,7 +261,7 @@ class _ModernCartItemCard extends StatelessWidget {
             padding: const EdgeInsets.all(1.5),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: theme.colorScheme.surface,
                 borderRadius: BorderRadius.circular(AppRadius.large),
                 boxShadow: [
                   BoxShadow(
@@ -284,7 +291,7 @@ class _ModernCartItemCard extends StatelessWidget {
                         Text(
                           item.name,
                           style: AppTextStyles.body1.copyWith(
-                            color: AppColors.textPrimary,
+                            color: theme.colorScheme.onBackground,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -294,7 +301,8 @@ class _ModernCartItemCard extends StatelessWidget {
                           style: TextStyle(
                             fontFamily: AppTextStyles.fontFamily,
                             fontSize: 13,
-                            color: AppColors.secondary,
+                            color:
+                                theme.colorScheme.onBackground.withOpacity(0.7),
                           ),
                         ),
                       ],
@@ -331,6 +339,7 @@ class _ModernCartItemCard extends StatelessWidget {
                           style: TextStyle(
                             fontFamily: AppTextStyles.fontFamily,
                             fontSize: 15,
+                            color: theme.colorScheme.onBackground,
                           ),
                         ),
                         const SizedBox(width: AppSpacing.sm),
@@ -382,6 +391,8 @@ class _InvoiceSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Padding(
@@ -389,20 +400,20 @@ class _InvoiceSummaryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildInvoiceRow('المجموع الفرعي', subTotal),
+            _buildInvoiceRow('المجموع الفرعي', subTotal, theme),
             const SizedBox(height: AppSpacing.sm),
-            _buildInvoiceRow('رسوم التوصيل', deliveryFee),
+            _buildInvoiceRow('رسوم التوصيل', deliveryFee, theme),
             const SizedBox(height: AppSpacing.sm),
             if (discount > 0) ...[
-              _buildInvoiceRow('الخصم', -discount, isDiscount: true),
+              _buildInvoiceRow('الخصم', -discount, theme, isDiscount: true),
               const SizedBox(height: AppSpacing.md),
             ],
-            const Divider(
+            Divider(
               height: AppSpacing.md * 2,
               thickness: 1.2,
-              color: AppColors.textSecondary,
+              color: theme.colorScheme.onBackground.withOpacity(0.2),
             ),
-            _buildInvoiceRow('الإجمالي الكلي', totalCost, isTotal: true),
+            _buildInvoiceRow('الإجمالي الكلي', totalCost, theme, isTotal: true),
             const SizedBox(height: AppSpacing.md),
             DecoratedBox(
               decoration: BoxDecoration(
@@ -434,9 +445,10 @@ class _InvoiceSummaryCard extends StatelessWidget {
     );
   }
 
-  Widget _buildInvoiceRow(String label, double value,
+  Widget _buildInvoiceRow(String label, double value, ThemeData theme,
       {bool isTotal = false, bool isDiscount = false}) {
-    final colorText = isDiscount ? AppColors.primary : AppColors.textPrimary;
+    final colorText =
+        isDiscount ? theme.colorScheme.primary : theme.colorScheme.onBackground;
     final formatted = '﷼${value.abs().toStringAsFixed(2)}';
     final valueText = isDiscount ? '-$formatted' : formatted;
     final valueStyle = isTotal
@@ -444,8 +456,9 @@ class _InvoiceSummaryCard extends StatelessWidget {
             .copyWith(color: colorText, fontWeight: FontWeight.bold)
         : AppTextStyles.body2.copyWith(color: colorText);
     final labelStyle = isTotal
-        ? AppTextStyles.body2.copyWith(color: AppColors.textPrimary)
-        : AppTextStyles.body2.copyWith(color: AppColors.textSecondary);
+        ? AppTextStyles.body2.copyWith(color: theme.colorScheme.onBackground)
+        : AppTextStyles.body2
+            .copyWith(color: theme.colorScheme.onBackground.withOpacity(0.7));
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),

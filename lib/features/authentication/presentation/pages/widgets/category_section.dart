@@ -7,7 +7,10 @@ import 'package:yemenshop/core/theme/design_system.dart';
 class CategoriesSection extends StatelessWidget {
   const CategoriesSection({Key? key}) : super(key: key);
 
-  Widget _buildCategoryCard(String title, IconData iconData) {
+  Widget _buildCategoryCard(
+      String title, IconData iconData, BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       children: [
         Container(
@@ -28,7 +31,10 @@ class CategoriesSection extends StatelessWidget {
           width: 70,
           child: Text(
             title,
-            style: AppTextStyles.body1.copyWith(fontSize: 11),
+            style: AppTextStyles.body1.copyWith(
+              fontSize: 11,
+              color: theme.colorScheme.onBackground,
+            ),
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -40,32 +46,40 @@ class CategoriesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('الفئات', style: AppTextStyles.h2),
+          Text('الفئات',
+              style: AppTextStyles.h2.copyWith(
+                color: theme.colorScheme.onBackground,
+              )),
           const SizedBox(height: AppSpacing.md),
           SizedBox(
             height: 110,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
-                _buildCategoryCard('عسل يمني', HugeIcons.strokeRoundedHoney01),
-                const SizedBox(width: AppSpacing.sm),
-                _buildCategoryCard('قهوة', HugeIcons.strokeRoundedCoffee01),
+                _buildCategoryCard(
+                    'عسل يمني', HugeIcons.strokeRoundedHoney01, context),
                 const SizedBox(width: AppSpacing.sm),
                 _buildCategoryCard(
-                    'منتجات غذائية', HugeIcons.strokeRoundedOrganicFood),
+                    'قهوة', HugeIcons.strokeRoundedCoffee01, context),
+                const SizedBox(width: AppSpacing.sm),
+                _buildCategoryCard('منتجات غذائية',
+                    HugeIcons.strokeRoundedOrganicFood, context),
                 const SizedBox(width: AppSpacing.sm),
                 _buildCategoryCard(
-                    'ملابس تقليدية', HugeIcons.strokeRoundedClothes),
-                const SizedBox(width: AppSpacing.sm),
-                _buildCategoryCard('جنابي', HugeIcons.strokeRoundedKnife01),
+                    'ملابس تقليدية', HugeIcons.strokeRoundedClothes, context),
                 const SizedBox(width: AppSpacing.sm),
                 _buildCategoryCard(
-                    'بخور يمني', HugeIcons.strokeRoundedSunCloudMidSnow01),
+                    'جنابي', HugeIcons.strokeRoundedKnife01, context),
+                const SizedBox(width: AppSpacing.sm),
+                _buildCategoryCard('بخور يمني',
+                    HugeIcons.strokeRoundedSunCloudMidSnow01, context),
               ],
             ),
           ),

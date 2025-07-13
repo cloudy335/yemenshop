@@ -57,8 +57,9 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
     }
   }
 
-  /// Wraps [child] in the app’s primary gradient outline
-  Widget _withGradientOutline({required Widget child}) {
+  /// Wraps [child] in the app's primary gradient outline
+  Widget _withGradientOutline(
+      {required Widget child, required ThemeData theme}) {
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient: AppColors.primaryGradient,
@@ -68,7 +69,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
         padding: const EdgeInsets.all(1.5),
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(AppRadius.normal - 2),
           ),
           child: child,
@@ -79,15 +80,20 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.surface,
+        backgroundColor: theme.scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor: AppColors.surface,
+          backgroundColor: theme.appBarTheme.backgroundColor,
           elevation: 0,
           automaticallyImplyLeading: false,
-          title: const Text('الدفع بالبطاقة'),
+          title: Text('الدفع بالبطاقة',
+              style: TextStyle(
+                color: theme.colorScheme.onBackground,
+              )),
           centerTitle: true,
         ),
         body: SingleChildScrollView(
@@ -153,8 +159,8 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
               // 2) Card Type Selector — outlined or filled with gradient
               Text(
                 'اختر نوع البطاقة',
-                style:
-                    AppTextStyles.body2.copyWith(color: AppColors.textPrimary),
+                style: AppTextStyles.body2
+                    .copyWith(color: theme.colorScheme.onBackground),
               ),
               const SizedBox(height: AppSpacing.sm),
               Row(
@@ -167,8 +173,9 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                       child: Text(
                         type,
                         style: AppTextStyles.body2.copyWith(
-                          color:
-                              isSelected ? Colors.white : AppColors.textPrimary,
+                          color: isSelected
+                              ? Colors.white
+                              : theme.colorScheme.onBackground,
                         ),
                       ),
                     ),
@@ -193,7 +200,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                   child: label,
                                 ),
                               )
-                            : _withGradientOutline(child: label),
+                            : _withGradientOutline(child: label, theme: theme),
                       ),
                     ),
                   );
@@ -209,18 +216,26 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Card Number
-                    Text('رقم البطاقة', style: AppTextStyles.body2),
+                    Text('رقم البطاقة',
+                        style: AppTextStyles.body2.copyWith(
+                          color: theme.colorScheme.onBackground,
+                        )),
                     const SizedBox(height: AppSpacing.sm),
                     _withGradientOutline(
                       child: TextFormField(
                         keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
+                        style: TextStyle(color: theme.colorScheme.onBackground),
+                        decoration: InputDecoration(
                           border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
+                          contentPadding: const EdgeInsets.symmetric(
                             horizontal: AppSpacing.sm,
                             vertical: AppSpacing.sm,
                           ),
                           hintText: 'XXXX XXXX XXXX XXXX',
+                          hintStyle: TextStyle(
+                            color:
+                                theme.colorScheme.onBackground.withOpacity(0.5),
+                          ),
                         ),
                         onSaved: (v) => _cardNumber = v ?? '',
                         validator: (v) {
@@ -230,6 +245,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                           return null;
                         },
                       ),
+                      theme: theme,
                     ),
                     const SizedBox(height: AppSpacing.md),
 
@@ -242,20 +258,28 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('تاريخ الانتهاء',
-                                  style: AppTextStyles.body2),
+                                  style: AppTextStyles.body2.copyWith(
+                                    color: theme.colorScheme.onBackground,
+                                  )),
                               const SizedBox(height: AppSpacing.sm),
                               _withGradientOutline(
                                 child: TextFormField(
                                   controller: _expiryController,
                                   readOnly: true,
+                                  style: TextStyle(
+                                      color: theme.colorScheme.onBackground),
                                   onTap: () => _selectExpiryDate(context),
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     border: InputBorder.none,
-                                    contentPadding: EdgeInsets.symmetric(
+                                    contentPadding: const EdgeInsets.symmetric(
                                       horizontal: AppSpacing.sm,
                                       vertical: AppSpacing.sm,
                                     ),
                                     hintText: 'MM/YY',
+                                    hintStyle: TextStyle(
+                                      color: theme.colorScheme.onBackground
+                                          .withOpacity(0.5),
+                                    ),
                                   ),
                                   validator: (v) {
                                     if (v == null ||
@@ -266,6 +290,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                     return null;
                                   },
                                 ),
+                                theme: theme,
                               ),
                             ],
                           ),
@@ -276,19 +301,28 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('CVV', style: AppTextStyles.body2),
+                              Text('CVV',
+                                  style: AppTextStyles.body2.copyWith(
+                                    color: theme.colorScheme.onBackground,
+                                  )),
                               const SizedBox(height: AppSpacing.sm),
                               _withGradientOutline(
                                 child: TextFormField(
                                   keyboardType: TextInputType.number,
                                   obscureText: true,
-                                  decoration: const InputDecoration(
+                                  style: TextStyle(
+                                      color: theme.colorScheme.onBackground),
+                                  decoration: InputDecoration(
                                     border: InputBorder.none,
-                                    contentPadding: EdgeInsets.symmetric(
+                                    contentPadding: const EdgeInsets.symmetric(
                                       horizontal: AppSpacing.sm,
                                       vertical: AppSpacing.sm,
                                     ),
                                     hintText: 'XXX',
+                                    hintStyle: TextStyle(
+                                      color: theme.colorScheme.onBackground
+                                          .withOpacity(0.5),
+                                    ),
                                   ),
                                   onSaved: (v) => _cvv = v ?? '',
                                   validator: (v) {
@@ -298,6 +332,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                     return null;
                                   },
                                 ),
+                                theme: theme,
                               ),
                             ],
                           ),
@@ -308,17 +343,25 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                     const SizedBox(height: AppSpacing.md),
 
                     // Card Holder
-                    Text('اسم صاحب البطاقة', style: AppTextStyles.body2),
+                    Text('اسم صاحب البطاقة',
+                        style: AppTextStyles.body2.copyWith(
+                          color: theme.colorScheme.onBackground,
+                        )),
                     const SizedBox(height: AppSpacing.sm),
                     _withGradientOutline(
                       child: TextFormField(
-                        decoration: const InputDecoration(
+                        style: TextStyle(color: theme.colorScheme.onBackground),
+                        decoration: InputDecoration(
                           border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
+                          contentPadding: const EdgeInsets.symmetric(
                             horizontal: AppSpacing.sm,
                             vertical: AppSpacing.sm,
                           ),
                           hintText: 'الاسم الكامل',
+                          hintStyle: TextStyle(
+                            color:
+                                theme.colorScheme.onBackground.withOpacity(0.5),
+                          ),
                         ),
                         onSaved: (v) => _cardHolder = v ?? '',
                         validator: (v) {
@@ -328,6 +371,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                           return null;
                         },
                       ),
+                      theme: theme,
                     ),
 
                     const SizedBox(height: AppSpacing.xl),

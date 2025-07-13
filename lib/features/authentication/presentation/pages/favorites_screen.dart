@@ -20,20 +20,23 @@ class FavoritesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.surface,
+        backgroundColor: theme.scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor: AppColors.surface,
-          foregroundColor: AppColors.textPrimary,
+          backgroundColor: theme.appBarTheme.backgroundColor,
+          foregroundColor: theme.colorScheme.onBackground,
           systemOverlayStyle: SystemUiOverlayStyle.dark,
           elevation: 0,
           automaticallyImplyLeading: false,
           centerTitle: true,
           title: Text(
             'المفضلة',
-            style: AppTextStyles.h2.copyWith(color: AppColors.textPrimary),
+            style: AppTextStyles.h2
+                .copyWith(color: theme.colorScheme.onBackground),
           ),
         ),
         body: favorites.isEmpty
@@ -41,7 +44,7 @@ class FavoritesScreen extends StatelessWidget {
                 child: Text(
                   'لا توجد عناصر مفضلة',
                   style: AppTextStyles.body1
-                      .copyWith(color: AppColors.textSecondary),
+                      .copyWith(color: theme.colorScheme.onBackground),
                 ),
               )
             : Padding(
@@ -103,6 +106,8 @@ class ModernProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -110,8 +115,10 @@ class ModernProductCard extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.grey.shade300, width: 1),
+              color: theme.colorScheme.surface,
+              border: Border.all(
+                  color: theme.colorScheme.onBackground.withOpacity(0.2),
+                  width: 1),
               borderRadius: BorderRadius.circular(19),
               boxShadow: [
                 BoxShadow(
@@ -136,13 +143,14 @@ class ModernProductCard extends StatelessWidget {
                     top: 8,
                     right: 8,
                     child: Material(
-                      color: Colors.white70,
+                      color: theme.colorScheme.surface.withOpacity(0.8),
                       shape: const CircleBorder(),
                       child: IconButton(
                         icon: Icon(
                           isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color:
-                              isFavorite ? Colors.red : AppColors.textSecondary,
+                          color: isFavorite
+                              ? Colors.red
+                              : theme.colorScheme.onBackground,
                         ),
                         onPressed: onToggleFavorite,
                         constraints: const BoxConstraints(),
@@ -161,7 +169,9 @@ class ModernProductCard extends StatelessWidget {
               children: [
                 Text(
                   item.title,
-                  style: AppTextStyles.body1,
+                  style: AppTextStyles.body1.copyWith(
+                    color: theme.colorScheme.onBackground,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),

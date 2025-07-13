@@ -1,17 +1,23 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yemenshop/core/theme/design_system.dart';
 import 'package:yemenshop/features/authentication/data/models/favorites.dart';
-import 'package:yemenshop/features/authentication/presentation/pages/cart_page.dart';
-import 'package:yemenshop/features/authentication/presentation/pages/favorites_screen.dart';
-import 'package:yemenshop/features/authentication/presentation/pages/profile_screen.dart';
-import 'package:yemenshop/features/authentication/presentation/pages/settings_screen.dart';
+import 'package:yemenshop/features/authentication/data/models/cart_item.dart'
+    as cart_model;
+import 'package:yemenshop/features/authentication/presentation/bloc/blocs.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/widgets/app_bar_content.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/widgets/bottom_nav_bar.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/widgets/category_section.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/widgets/product_tile.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/widgets/promo_carsousel.dart';
+// Import the screens we need for navigation
+import 'settings_screen.dart';
+import 'favorites_screen.dart';
+import 'profile_screen.dart';
+// Import the original cart components
+import 'cart_page.dart';
 
 class YemenShopHomeScreen extends StatefulWidget {
   const YemenShopHomeScreen({Key? key}) : super(key: key);
@@ -27,73 +33,7 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _showTopShadow = false;
 
-  final List<FavoriteItem> _favorites = [];
-  final List<CartItem> _cartItems = [];
-
-  final List<FavoriteItem> _allProducts = [
-    FavoriteItem(
-      id: 'a',
-      title: 'قهوة يمنية طازجة',
-      imagePath: 'assets/images/coffee.png',
-      price: '150 ريال',
-    ),
-    FavoriteItem(
-      id: 'b',
-      title: 'أفضل العسل اليمني',
-      imagePath: 'assets/images/honey5.png',
-      price: '200 ريال',
-    ),
-    FavoriteItem(
-      id: 'c',
-      title: 'قهوة عربية',
-      imagePath: 'assets/images/coffee4.png',
-      price: '100 ريال',
-    ),
-    FavoriteItem(
-      id: 'f',
-      title: 'ملابس تقليدية',
-      imagePath: 'assets/images/clothes.png',
-      price: '180 ريال',
-    ),
-    FavoriteItem(
-      id: 'g',
-      title: 'قهوة مختصة',
-      imagePath: 'assets/images/coffee1.png',
-      price: '170 ريال',
-    ),
-    FavoriteItem(
-      id: 'h',
-      title: 'عسل طبيعي',
-      imagePath: 'assets/images/honey.png',
-      price: '210 ريال',
-    ),
-    FavoriteItem(
-      id: 'i',
-      title: 'عسل نخب أول',
-      imagePath: 'assets/images/honey1.png',
-      price: '230 ريال',
-    ),
-    FavoriteItem(
-      id: 'j',
-      title: 'عسل مكرر',
-      imagePath: 'assets/images/honey2.png',
-      price: '190 ريال',
-    ),
-    FavoriteItem(
-      id: 'k',
-      title: 'جنبية يدوية',
-      imagePath: 'assets/images/jambia.png',
-      price: '250 ريال',
-    ),
-    FavoriteItem(
-      id: 'n',
-      title: 'ملابس نسائية',
-      imagePath: 'assets/images/womenclothes.png',
-      price: '220 ريال',
-    ),
-  ];
-
-  int _selectedIndex = 2;
+  int _selectedIndex = 2; // Start with home (index 2)
 
   final List<PromoAd> promoAds = [
     PromoAd(
@@ -123,6 +63,13 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_handleScroll);
+
+    // Load products using BLoC
+    context.read<ProductBloc>().add(LoadProducts());
+
+    // Load cart using BLoC
+    context.read<CartBloc>().add(LoadCart());
+
     Timer.periodic(const Duration(seconds: 4), (_) {
       setState(() {
         _currentPromoPage = (_currentPromoPage + 1) % promoAds.length;
@@ -153,16 +100,8 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
     }
   }
 
-  bool _isFavorite(FavoriteItem item) => _favorites.contains(item);
-
   void _toggleFavorite(FavoriteItem item) {
-    setState(() {
-      if (_isFavorite(item)) {
-        _favorites.remove(item);
-      } else {
-        _favorites.add(item);
-      }
-    });
+    context.read<ProductBloc>().add(ToggleFavorite(product: item));
   }
 
   void _addToCart(FavoriteItem fav) {
@@ -170,149 +109,108 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
           fav.price.replaceAll(RegExp(r'[^0-9.]'), ''),
         ) ??
         0.0;
-    final newItem = CartItem(
+    final newItem = cart_model.CartItem(
       id: fav.id,
       name: fav.title,
       imagePath: fav.imagePath,
       price: unitPrice,
       quantity: 1,
     );
-    setState(() {
-      final idx = _cartItems.indexWhere((c) => c.id == newItem.id);
-      if (idx >= 0) {
-        _cartItems[idx].quantity += 1;
-      } else {
-        _cartItems.add(newItem);
-      }
-    });
-  }
-
-  void _onQuantityChanged(String itemId, int change) {
-    setState(() {
-      final idx = _cartItems.indexWhere((c) => c.id == itemId);
-      if (idx < 0) return;
-      final newQty = _cartItems[idx].quantity + change;
-      if (newQty <= 0) {
-        _cartItems.removeAt(idx);
-      } else {
-        _cartItems[idx].quantity = newQty;
-      }
-    });
-  }
-
-  void _onRemoveItem(String itemId) {
-    setState(() => _cartItems.removeWhere((c) => c.id == itemId));
-  }
-
-  void _onUndoRemove(CartItem removedItem) {
-    setState(() => _cartItems.add(removedItem));
-  }
-
-  void _onApplyPromoCode(String code) {
-    final valid = code == 'SAVE10' && _cartItems.isNotEmpty;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          valid ? 'رمز العرض SAVE10 تم تفعيله!' : 'رمز العرض غير صالح',
-        ),
-      ),
-    );
-  }
-
-  void _onCheckout() {
-    final msg =
-        _cartItems.isEmpty ? 'السلة فارغة' : 'جاري الانتقال إلى صفحة الدفع...';
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg)),
-    );
+    context.read<CartBloc>().add(AddToCart(item: newItem));
   }
 
   void _onNavBarTapped(int index) {
     setState(() => _selectedIndex = index);
   }
 
-  Widget _buildHomeContent() {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          SliverAppBar(
-            floating: true,
-            snap: true,
-            automaticallyImplyLeading: false,
-            expandedHeight: 40,
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            flexibleSpace: const FlexibleSpaceBar(
-              collapseMode: CollapseMode.pin,
-              background: AppBarContent(),
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate([
-              PromoCarousel(
-                promoController: _promoController,
-                promoAds: promoAds,
-              ),
-              const CategoriesSection(),
-              ProductsSection(
-                products: _allProducts,
-                favorites: _favorites,
-                onToggleFavorite: _toggleFavorite,
-                onAddToCart: _addToCart,
-              ),
-            ]),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
-      ),
+    return Directionality(
+      textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.surface,
-        body: IndexedStack(
-          index: _selectedIndex,
-          children: [
-            const SettingsScreen(),
-            FavoritesScreen(
-              favorites: _favorites,
-              onToggleFavorite: _toggleFavorite,
-            ),
-            // Home only: add top padding for status bar
-            Column(
-              children: [
-                SizedBox(height: MediaQuery.of(context).padding.top),
-                Expanded(child: _buildHomeContent()),
-              ],
-            ),
-            CartScreenUI(
-              items: _cartItems,
-              subTotal: _cartItems.fold(
-                0.0,
-                (sum, item) => sum + (item.price * item.quantity),
+        backgroundColor: Theme.of(context).colorScheme.background,
+        body: SafeArea(
+          child: IndexedStack(
+            index: _selectedIndex,
+            children: [
+              // Settings Screen (index 0)
+              SettingsScreen(),
+
+              // Favorites Screen (index 1)
+              BlocBuilder<ProductBloc, ProductState>(
+                builder: (context, state) {
+                  if (state is ProductsLoaded) {
+                    return FavoritesScreen(
+                      favorites: state.favorites,
+                      onToggleFavorite: _toggleFavorite,
+                      onAddToCart: _addToCart,
+                    );
+                  }
+                  return const Center(child: CircularProgressIndicator());
+                },
               ),
-              deliveryFee: 0.0,
-              discount: 0.0,
-              totalCost: _cartItems.fold(
-                0.0,
-                (sum, item) => sum + (item.price * item.quantity),
+
+              // Home Screen (index 2)
+              _buildHomeContent(),
+
+              // Cart Screen (index 3)
+              BlocBuilder<CartBloc, CartState>(
+                builder: (context, state) {
+                  if (state is CartLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (state is CartLoaded) {
+                    return _buildOriginalCartScreen(state.items, state.total);
+                  }
+
+                  if (state is CartError) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 64,
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'حدث خطأ في تحميل السلة',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.error,
+                                ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            state.message,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withOpacity(0.7),
+                                ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  // For CartInitial state, show empty cart
+                  return _buildOriginalCartScreen([], 0.0);
+                },
               ),
-              onQuantityChanged: _onQuantityChanged,
-              onRemoveItem: _onRemoveItem,
-              onUndoRemove: _onUndoRemove,
-              onCheckout: _onCheckout,
-            ),
-            const ProfileScreen(),
-          ],
+
+              // Profile Screen (index 4)
+              ProfileScreen(),
+            ],
+          ),
         ),
         bottomNavigationBar: BottomNavBar(
           selectedIndex: _selectedIndex,
@@ -322,74 +220,148 @@ class _YemenShopHomeScreenState extends State<YemenShopHomeScreen> {
     );
   }
 
-  Widget _buildItemRow(CartItem item) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.md),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppRadius.normal),
-            child: Image.asset(
-              item.imagePath,
-              width: 80,
-              height: 80,
-              fit: BoxFit.cover,
-            ),
+  Widget _buildHomeContent() {
+    return Column(
+      children: [
+        // App Bar
+        AppBarContent(),
+
+        // Main Content with BLoC
+        Expanded(
+          child: BlocBuilder<ProductBloc, ProductState>(
+            builder: (context, state) {
+              if (state is ProductLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (state is ProductsLoaded) {
+                return _buildContent(state.products, state.favorites);
+              }
+
+              if (state is ProductError) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 64,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'حدث خطأ في تحميل المنتجات',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        state.message,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.7),
+                            ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return const Center(child: CircularProgressIndicator());
+            },
           ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(item.name, style: AppTextStyles.body1),
-                const SizedBox(height: AppSpacing.xs),
-                Text('${item.lineTotal.toStringAsFixed(2)} ﷼',
-                    style: AppTextStyles.body2),
-              ],
-            ),
-          ),
-          const SizedBox(width: 10),
-          IconButton(
-            icon: Icon(Icons.close, color: AppColors.textSecondary),
-            onPressed: () {},
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _billLine(String label, double value,
-      {bool isTotal = false, bool isDiscount = false}) {
-    final labelStyle = AppTextStyles.body2.copyWith(
-      fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-      color: AppColors.textSecondary,
-    );
-    final formatted = '\$${value.abs().toStringAsFixed(0)}';
-    final valueText = isDiscount ? '-$formatted' : formatted;
-    final valueStyle = AppTextStyles.body1.copyWith(
-      color: isTotal
-          ? AppColors.primary
-          : (isDiscount ? AppColors.error : AppColors.textPrimary),
-      fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-    );
+  Widget _buildContent(
+      List<FavoriteItem> products, List<FavoriteItem> favorites) {
+    return CustomScrollView(
+      controller: _scrollController,
+      slivers: [
+        // Your original Promo Carousel
+        SliverToBoxAdapter(
+          child: PromoCarousel(
+            promoController: _promoController,
+            promoAds: promoAds,
+          ),
+        ),
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
-      child: Row(
-        children: [
-          Text(label, style: labelStyle),
-          const Spacer(),
-          Text(valueText, style: valueStyle),
-        ],
-      ),
+        // Your original Categories Section
+        const SliverToBoxAdapter(
+          child: CategoriesSection(),
+        ),
+
+        // Your original Products Section
+        SliverToBoxAdapter(
+          child: ProductsSection(
+            products: products,
+            favorites: favorites,
+            onToggleFavorite: _toggleFavorite,
+            onAddToCart: _addToCart,
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _billDivider() {
-    return Divider(color: Colors.grey.shade300, thickness: 1);
+  Widget _buildOriginalCartScreen(
+      List<cart_model.CartItem> blocItems, double total) {
+    // Convert BLoC cart items to the format expected by CartScreenUI
+    final List<CartItem> originalItems = blocItems
+        .map((blocItem) => CartItem(
+              id: blocItem.id,
+              name: blocItem.name,
+              imagePath: blocItem.imagePath,
+              quantity: blocItem.quantity,
+              price: blocItem.price,
+            ))
+        .toList();
+
+    // Calculate fees (you can adjust these values)
+    final double deliveryFee = 10.0;
+    final double discount = 0.0;
+    final double totalCost = total + deliveryFee - discount;
+
+    return CartScreenUI(
+      items: originalItems,
+      subTotal: total,
+      deliveryFee: deliveryFee,
+      discount: discount,
+      totalCost: totalCost,
+      onQuantityChanged: (itemId, change) {
+        context.read<CartBloc>().add(
+              UpdateQuantity(
+                itemId: itemId,
+                quantity: change,
+              ),
+            );
+      },
+      onRemoveItem: (itemId) {
+        context.read<CartBloc>().add(RemoveFromCart(itemId: itemId));
+      },
+      onUndoRemove: (removedItem) {
+        // Convert back to BLoC format
+        final blocItem = cart_model.CartItem(
+          id: removedItem.id,
+          name: removedItem.name,
+          imagePath: removedItem.imagePath,
+          price: removedItem.price,
+          quantity: removedItem.quantity,
+        );
+        context.read<CartBloc>().add(AddToCart(item: blocItem));
+      },
+      onCheckout: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('جاري الانتقال إلى الدفع...'),
+          ),
+        );
+      },
+    );
   }
 }

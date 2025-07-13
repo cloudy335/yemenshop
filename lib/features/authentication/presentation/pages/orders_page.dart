@@ -313,7 +313,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                   Row(
                                     children: [
                                       Text(order.id,
-                                          style: AppTextStyles.h3 ??
+                                          style: AppTextStyles.h1 ??
                                               const TextStyle(
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.bold)),
@@ -628,7 +628,7 @@ class OrderDetailsPage extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.lg),
               Text("المنتجات",
-                  style: AppTextStyles.h3 ??
+                  style: AppTextStyles.h1 ??
                       const TextStyle(
                           fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: AppSpacing.md),
@@ -746,7 +746,7 @@ class OrderDetailsPage extends StatelessWidget {
           Text(
             label,
             style: isTotal
-                ? AppTextStyles.h3 ??
+                ? AppTextStyles.h1 ??
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
                 : (AppTextStyles.body1 ?? const TextStyle(fontSize: 16))
                     .copyWith(
@@ -759,7 +759,7 @@ class OrderDetailsPage extends StatelessWidget {
           Text(
             value,
             style: isTotal
-                ? (AppTextStyles.h3 ??
+                ? (AppTextStyles.h1 ??
                         const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold))
                     .copyWith(color: AppColors.primary)

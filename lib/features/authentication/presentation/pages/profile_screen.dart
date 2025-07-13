@@ -368,20 +368,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.surface,
+        backgroundColor: theme.scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor: AppColors.surface,
+          backgroundColor: theme.appBarTheme.backgroundColor,
           elevation: 0,
-          title: const Text('الملف الشخصي', style: AppTextStyles.h2),
+          title: Text('الملف الشخصي',
+              style: AppTextStyles.h2.copyWith(
+                color: theme.colorScheme.onBackground,
+              )),
           centerTitle: true,
           actions: [
             if (!isEditing)
               IconButton(
                 tooltip: 'تعديل',
-                icon: const Icon(Icons.edit, color: AppColors.primary),
+                icon: Icon(Icons.edit, color: theme.colorScheme.primary),
                 onPressed: () {
                   setState(() => isEditing = true);
                 },
@@ -389,7 +394,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             if (isEditing)
               IconButton(
                 tooltip: 'إلغاء',
-                icon: const Icon(Icons.close, color: AppColors.primary),
+                icon: Icon(Icons.close, color: theme.colorScheme.primary),
                 onPressed: () {
                   setState(() => isEditing = false);
                 },
@@ -419,11 +424,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 bottom: 0,
                                 left: 5,
                                 child: Material(
-                                  color: Colors.white,
+                                  color: theme.colorScheme.surface,
                                   shape: const CircleBorder(),
                                   child: IconButton(
-                                    icon: const Icon(Icons.camera_alt,
-                                        color: AppColors.primary, size: 22),
+                                    icon: Icon(Icons.camera_alt,
+                                        color: theme.colorScheme.primary,
+                                        size: 22),
                                     onPressed: () {},
                                   ),
                                 ),
@@ -456,13 +462,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   children: [
                                     Text(
                                       nameController.text,
-                                      style: AppTextStyles.h2,
+                                      style: AppTextStyles.h2.copyWith(
+                                        color: theme.colorScheme.onBackground,
+                                      ),
                                     ),
                                     const SizedBox(height: AppSpacing.sm),
                                     Text(
                                       emailController.text,
                                       style: AppTextStyles.body1.copyWith(
-                                        color: AppColors.textSecondary,
+                                        color: theme.colorScheme.onBackground,
                                       ),
                                     ),
                                   ],
@@ -470,7 +478,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(height: AppSpacing.lg),
                         Divider(
-                            color: AppColors.textSecondary.withOpacity(0.2)),
+                            color: theme.colorScheme.onBackground
+                                .withOpacity(0.2)),
                         ProfileOptionTile(
                           icon: Icons.lock,
                           title: 'تغيير كلمة المرور',
@@ -529,20 +538,25 @@ class _ProfileField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return TextField(
       controller: controller,
       enabled: enabled,
       keyboardType: keyboardType,
       textAlign: TextAlign.right,
-      style: AppTextStyles.body1,
+      style: AppTextStyles.body1.copyWith(
+        color: theme.colorScheme.onSurface,
+      ),
       decoration: AppInputStyles.defaultDecoration(label: label).copyWith(
         filled: true,
-        fillColor:
-            enabled ? AppColors.surface : AppColors.surface.withOpacity(0.5),
+        fillColor: enabled
+            ? theme.colorScheme.surface
+            : theme.colorScheme.surface.withOpacity(0.5),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.normal),
           borderSide: BorderSide(
-            color: AppColors.textSecondary.withOpacity(0.3),
+            color: theme.colorScheme.onSurface.withOpacity(0.3),
           ),
         ),
       ),
@@ -565,8 +579,10 @@ class ProfileOptionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Material(
-      color: AppColors.surface,
+      color: theme.colorScheme.surface,
       borderRadius: BorderRadius.circular(AppRadius.normal),
       child: InkWell(
         borderRadius: BorderRadius.circular(AppRadius.normal),
@@ -575,13 +591,16 @@ class ProfileOptionTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 12),
           child: Row(
             children: [
-              Icon(icon, color: iconColor ?? AppColors.primary),
+              Icon(icon, color: iconColor ?? theme.colorScheme.primary),
               const SizedBox(width: 20),
               Expanded(
-                child: Text(title, style: AppTextStyles.body1),
+                child: Text(title,
+                    style: AppTextStyles.body1.copyWith(
+                      color: theme.colorScheme.onBackground,
+                    )),
               ),
-              const Icon(Icons.arrow_back_ios,
-                  size: 17, color: AppColors.textSecondary)
+              Icon(Icons.arrow_back_ios,
+                  size: 17, color: theme.colorScheme.onBackground)
             ],
           ),
         ),

@@ -25,6 +25,8 @@ class ProductsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(
@@ -32,7 +34,8 @@ class ProductsSection extends StatelessWidget {
         children: [
           Text(
             'المنتجات الأكثر مبيعًا',
-            style: AppTextStyles.h2.copyWith(color: AppColors.textPrimary),
+            style: AppTextStyles.h2
+                .copyWith(color: theme.colorScheme.onBackground),
           ),
           const SizedBox(height: 1),
           MasonryGridView.count(
@@ -83,14 +86,18 @@ class _ModernProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // 1) Image container with light grey outline & subtle shadow
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.grey.shade300, width: 1),
+            color: theme.colorScheme.surface,
+            border: Border.all(
+                color: theme.colorScheme.onBackground.withOpacity(0.2),
+                width: 1),
             borderRadius: BorderRadius.circular(19),
             boxShadow: [
               BoxShadow(
@@ -115,13 +122,14 @@ class _ModernProductCard extends StatelessWidget {
                   top: 8,
                   right: 8,
                   child: Material(
-                    color: Colors.white70,
+                    color: theme.colorScheme.surface.withOpacity(0.8),
                     shape: const CircleBorder(),
                     child: IconButton(
                       icon: Icon(
                         isFavorite ? Icons.favorite : Icons.favorite_border,
-                        color:
-                            isFavorite ? Colors.red : AppColors.textSecondary,
+                        color: isFavorite
+                            ? Colors.red
+                            : theme.colorScheme.onBackground,
                       ),
                       onPressed: onToggleFavorite,
                       constraints: const BoxConstraints(),
@@ -144,14 +152,16 @@ class _ModernProductCard extends StatelessWidget {
             children: [
               Text(
                 item.title,
-                style: AppTextStyles.body1,
+                style: AppTextStyles.body1.copyWith(
+                  color: theme.colorScheme.onBackground,
+                ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 4),
               Row(
                 children: [
-                  // Price painted with app’s primary gradient
+                  // Price painted with app's primary gradient
                   ShaderMask(
                     shaderCallback: (bounds) =>
                         AppColors.primaryGradient.createShader(bounds),
@@ -165,7 +175,7 @@ class _ModernProductCard extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  // “Add to cart” button: filled green pill
+                  // "Add to cart" button: filled green pill
                   InkWell(
                     borderRadius: BorderRadius.circular(16),
                     onTap: onAddToCart,

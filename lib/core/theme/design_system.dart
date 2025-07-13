@@ -5,24 +5,28 @@ import 'package:flutter/material.dart';
 
 /// Color palette
 class AppColors {
-  // Primary brand color (icons & buttons)
+  // --- Light colors
   static const Color primary = Color(0xFFD3A270);
-  // Secondary brand color (e.g., accents)
   static const Color secondary = Colors.black;
-
-  // Feedback colors
-  static const Color success = Color(0xFF4CAF50);
-  static const Color warning = Color(0xFFFFC107);
-  static const Color error = Color(0xFFF44336);
-
-  // Surfaces & backgrounds
-  static const Color background = Color(0xFFF5E8D7);
+  static const Color background = Color(0xFFFFFFFF);
   static const Color surface = Color(0xFFFFFFFF);
-
-  // Text colors
   static const Color textPrimary = Color(0xFF212121);
   static const Color textSecondary = Color(0xFF757575);
   static const Color textOnPrimary = Color(0xFFFFFFFF);
+
+  // --- Dark colors
+  static const Color darkPrimary = Color(0xFF4B3322);
+  static const Color darkSecondary = Color(0xFFBDA786);
+  static const Color darkBackground = Color(0xFF000000);
+  static const Color darkSurface = Color(0xFF000000);
+  static const Color darkTextPrimary = Color(0xFFFFFFFF);
+  static const Color darkTextSecondary = Color(0xFFFFFFFF);
+  static const Color darkTextOnPrimary = Color(0xFF000000);
+
+  // Feedback colors (same for both modes)
+  static const Color success = Color(0xFF4CAF50);
+  static const Color warning = Color(0xFFFFC107);
+  static const Color error = Color(0xFFF44336);
 
   /// The app’s main gradient
   static const LinearGradient primaryGradient = LinearGradient(
@@ -33,14 +37,6 @@ class AppColors {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
-
-  static var backgroundLight;
-  static var primaryDark;
-  static var primaryLight;
-  static var onPrimary;
-  static var text;
-  static var card;
-  static var border;
 }
 
 /// Spacing scale (8-pt grid)
@@ -66,9 +62,6 @@ class AppElevation {
   static const double low = 2.0;
   static const double medium = 4.0;
   static const double high = 8.0;
-
-  static var small;
-  static var large;
 }
 
 /// Typography styles using Rubik font
@@ -114,11 +107,6 @@ class AppTextStyles {
     height: 1.4,
     color: AppColors.textSecondary,
   );
-
-  static var h3;
-  static var buttonText;
-  static var titleMedium;
-  static var button;
 }
 
 /// Material Button styles
@@ -139,7 +127,7 @@ class AppButtonStyles {
   );
 
   static final ButtonStyle secondary = OutlinedButton.styleFrom(
-    side: BorderSide(color: AppColors.primary),
+    side: const BorderSide(color: AppColors.primary),
     foregroundColor: AppColors.primary,
     minimumSize: const Size(double.infinity, 48),
     padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
@@ -183,4 +171,99 @@ class AppInputStyles {
           borderRadius: BorderRadius.circular(AppRadius.small),
         ),
       );
+}
+
+/// Complete ThemeData for light & dark mode
+class AppThemes {
+  static final ThemeData light = ThemeData(
+    brightness: Brightness.light,
+    fontFamily: 'Rubik',
+    useMaterial3: true,
+    scaffoldBackgroundColor: AppColors.background,
+    cardColor: AppColors.surface,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.surface,
+      foregroundColor: AppColors.textPrimary,
+      elevation: 0,
+    ),
+    colorScheme: const ColorScheme.light(
+      primary: AppColors.primary,
+      secondary: AppColors.secondary,
+      background: AppColors.background,
+      surface: AppColors.surface,
+      onPrimary: AppColors.textOnPrimary,
+      onSecondary: AppColors.textPrimary,
+      onBackground: AppColors.textPrimary,
+      onSurface: AppColors.textPrimary,
+      error: AppColors.error,
+    ),
+    textTheme: const TextTheme(
+      displayLarge: AppTextStyles.h1,
+      displayMedium: AppTextStyles.h2,
+      bodyLarge: AppTextStyles.body1,
+      bodyMedium: AppTextStyles.body2,
+      labelSmall: AppTextStyles.caption,
+    ),
+  );
+
+  static final ThemeData dark = ThemeData(
+    brightness: Brightness.dark,
+    fontFamily: 'Rubik',
+    useMaterial3: true,
+    scaffoldBackgroundColor: AppColors.darkBackground,
+    cardColor: AppColors.darkSurface,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.darkSurface,
+      foregroundColor: AppColors.darkTextPrimary,
+      elevation: 0,
+    ),
+    colorScheme: const ColorScheme.dark(
+      primary: AppColors.darkPrimary,
+      secondary: AppColors.darkSecondary,
+      background: AppColors.darkBackground,
+      surface: AppColors.darkSurface,
+      onPrimary: AppColors.darkTextOnPrimary,
+      onSecondary: AppColors.darkTextPrimary,
+      onBackground: AppColors.darkTextPrimary,
+      onSurface: AppColors.darkTextPrimary,
+      error: AppColors.error,
+    ),
+    textTheme: const TextTheme(
+      displayLarge: TextStyle(
+        fontFamily: AppTextStyles.fontFamily,
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+        height: 1.25,
+        color: AppColors.darkTextPrimary,
+      ),
+      displayMedium: TextStyle(
+        fontFamily: AppTextStyles.fontFamily,
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        height: 1.3,
+        color: AppColors.darkTextPrimary,
+      ),
+      bodyLarge: TextStyle(
+        fontFamily: AppTextStyles.fontFamily,
+        fontSize: 14,
+        fontWeight: FontWeight.normal,
+        height: 1.5,
+        color: AppColors.darkTextPrimary,
+      ),
+      bodyMedium: TextStyle(
+        fontFamily: AppTextStyles.fontFamily,
+        fontSize: 14,
+        fontWeight: FontWeight.normal,
+        height: 1.5,
+        color: AppColors.darkTextSecondary,
+      ),
+      labelSmall: TextStyle(
+        fontFamily: AppTextStyles.fontFamily,
+        fontSize: 12,
+        fontWeight: FontWeight.normal,
+        height: 1.4,
+        color: AppColors.darkTextSecondary,
+      ),
+    ),
+  );
 }

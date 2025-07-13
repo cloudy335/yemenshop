@@ -9,8 +9,10 @@ class CreateLoginPageUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
@@ -33,7 +35,8 @@ class CreateLoginPageUI extends StatelessWidget {
               Text(
                 'المتجر اليمني',
                 textAlign: TextAlign.center,
-                style: AppTextStyles.h1.copyWith(color: AppColors.secondary),
+                style: AppTextStyles.h1
+                    .copyWith(color: theme.colorScheme.onBackground),
               ),
 
               SizedBox(height: AppSpacing.xl * 5),
@@ -43,7 +46,7 @@ class CreateLoginPageUI extends StatelessWidget {
                 'انطلق في رحلة الذوق اليمني مع المتجر اليمني أول تطبيق في السعودية يجمع أفضل وأشهر المنتجات اليمنية الأصيلة مثل العسل الفاخر والبُن المختار',
                 textAlign: TextAlign.right,
                 style: AppTextStyles.body2.copyWith(
-                  color: AppColors.textPrimary,
+                  color: theme.colorScheme.onBackground,
                   height: 2.5,
                   wordSpacing: 1.5,
                 ),
@@ -90,7 +93,7 @@ class CreateLoginPageUI extends StatelessWidget {
                             height: 56,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: theme.scaffoldBackgroundColor,
                               borderRadius:
                                   BorderRadius.circular(AppRadius.normal),
                             ),

@@ -9,11 +9,13 @@ class LoginPageUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     // Input decoration with filled surface and no inner border
     InputDecoration _inputDecoration(String label) {
       return AppInputStyles.defaultDecoration(label: label).copyWith(
         filled: true,
-        fillColor: AppColors.surface,
+        fillColor: theme.colorScheme.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.normal),
           borderSide: BorderSide.none,
@@ -22,9 +24,9 @@ class LoginPageUI extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.normal),
           borderSide: BorderSide.none,
         ),
-        labelStyle: const TextStyle(
+        labelStyle: TextStyle(
           fontFamily: AppTextStyles.fontFamily,
-          color: AppColors.textPrimary,
+          color: theme.colorScheme.onSurface,
           fontSize: 12,
         ),
       );
@@ -47,10 +49,10 @@ class LoginPageUI extends StatelessWidget {
           keyboardType: keyboardType,
           textAlign: TextAlign.right,
           textAlignVertical: TextAlignVertical.center,
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 14,
-            color: AppColors.textPrimary,
+            color: theme.colorScheme.onSurface,
           ),
           decoration: _inputDecoration(label),
         ),
@@ -58,7 +60,7 @@ class LoginPageUI extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Directionality(
           textDirection: TextDirection.rtl,
@@ -69,7 +71,10 @@ class LoginPageUI extends StatelessWidget {
                 const SizedBox(height: AppSpacing.xl * 2.5),
                 Image.asset('assets/images/Logo.png', width: 140, height: 140),
                 const SizedBox(height: AppSpacing.md),
-                const Text('تسجيل الدخول', style: AppTextStyles.h2),
+                Text('تسجيل الدخول',
+                    style: AppTextStyles.h2.copyWith(
+                      color: theme.colorScheme.onBackground,
+                    )),
                 const SizedBox(height: AppSpacing.xl),
 
                 // Phone Field with primary gradient border
@@ -97,8 +102,11 @@ class LoginPageUI extends StatelessWidget {
                           horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
                       minimumSize: const Size(50, 30),
                     ),
-                    child: const Text('نسيت كلمة المرور؟',
-                        style: AppTextStyles.caption),
+                    child: Text('نسيت كلمة المرور؟',
+                        style: AppTextStyles.caption.copyWith(
+                          color:
+                              theme.colorScheme.onBackground.withOpacity(0.7),
+                        )),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
@@ -146,9 +154,11 @@ class LoginPageUI extends StatelessWidget {
                           horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                       minimumSize: const Size(50, 30),
                     ),
-                    child: const Text(
+                    child: Text(
                       'لا يوجد حساب؟ قم بإنشاء حساب',
-                      style: AppTextStyles.caption,
+                      style: AppTextStyles.caption.copyWith(
+                        color: theme.colorScheme.onBackground.withOpacity(0.7),
+                      ),
                     ),
                   ),
                 ),

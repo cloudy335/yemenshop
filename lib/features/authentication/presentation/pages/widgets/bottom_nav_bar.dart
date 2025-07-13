@@ -16,30 +16,35 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.grey.shade300, width: 1)),
+        border: Border(
+            top: BorderSide(
+                color: theme.colorScheme.onBackground.withOpacity(0.2),
+                width: 1)),
       ),
       child: BottomNavigationBar(
         currentIndex: selectedIndex,
         onTap: onNavBarTapped,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: AppColors.surface,
+        backgroundColor: theme.colorScheme.surface,
         showUnselectedLabels: true,
         elevation: 0,
 
-        // Make all labels black or secondary black when unselected
-        selectedItemColor: AppColors.textPrimary,
-        unselectedItemColor: AppColors.textSecondary,
+        // Make all labels theme-aware
+        selectedItemColor: theme.colorScheme.onBackground,
+        unselectedItemColor: theme.colorScheme.onBackground.withOpacity(0.7),
         selectedLabelStyle: AppTextStyles.body2.copyWith(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: AppColors.textPrimary,
+          color: theme.colorScheme.onBackground,
         ),
         unselectedLabelStyle: AppTextStyles.body2.copyWith(
           fontSize: 10,
           fontWeight: FontWeight.normal,
-          color: AppColors.textSecondary,
+          color: theme.colorScheme.onBackground.withOpacity(0.7),
         ),
 
         items: [

@@ -57,10 +57,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.surface,
+        backgroundColor: theme.scaffoldBackgroundColor,
         body: SafeArea(
           child: Column(
             children: [
@@ -93,7 +95,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 errorBuilder: (ctx, error, stack) => Center(
                                   child: Icon(
                                     Icons.image_not_supported,
-                                    color: AppColors.textOnPrimary,
+                                    color: theme.colorScheme.onBackground,
                                     size: 50,
                                   ),
                                 ),
@@ -126,7 +128,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               slide.subtitle,
                               textAlign: TextAlign.center,
                               style: AppTextStyles.body1.copyWith(
-                                color: AppColors.textSecondary,
+                                color: theme.colorScheme.onBackground
+                                    .withOpacity(0.7),
                               ),
                             ),
                           ),

@@ -53,10 +53,12 @@ class _YemenShopSplashScreenState extends State<YemenShopSplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.surface,
+        backgroundColor: theme.scaffoldBackgroundColor,
         body: Center(
           child: FadeTransition(
             opacity: _fadeAnimation,
@@ -81,7 +83,7 @@ class _YemenShopSplashScreenState extends State<YemenShopSplashScreen>
                 Text(
                   'المتجر اليمني',
                   style: AppTextStyles.h2.copyWith(
-                    color: AppColors.secondary,
+                    color: theme.colorScheme.onBackground,
                     fontWeight: FontWeight.w300,
                   ),
                 ),
