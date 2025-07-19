@@ -37,7 +37,7 @@ class ProductsSection extends StatelessWidget {
             style: AppTextStyles.h2
                 .copyWith(color: theme.colorScheme.onBackground),
           ),
-          const SizedBox(height: 1),
+          const SizedBox(height: 20),
           MasonryGridView.count(
             crossAxisCount: 2,
             mainAxisSpacing: AppSpacing.lg,

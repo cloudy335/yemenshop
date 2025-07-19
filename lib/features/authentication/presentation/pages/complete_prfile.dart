@@ -9,14 +9,16 @@ class CompleteProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.surface,
+        backgroundColor: theme.colorScheme.surface,
         appBar: AppBar(
-          title: const Text(
+          title: Text(
             'إكمال الملف الشخصي',
-            style: AppTextStyles.h1,
+            style: AppTextStyles.h1
+                .copyWith(color: theme.colorScheme.onBackground),
           ),
           centerTitle: true,
           backgroundColor: Colors.transparent,
@@ -34,6 +36,7 @@ class CompleteProfilePage extends StatelessWidget {
                 _buildInputField(
                   hint: 'أدخل اسمك الكامل',
                   controller: nameController,
+                  theme: theme,
                 ),
 
                 const SizedBox(height: AppSpacing.lg),
@@ -43,6 +46,7 @@ class CompleteProfilePage extends StatelessWidget {
                   hint: 'أدخل رقم هاتفك',
                   controller: phoneController,
                   keyboardType: TextInputType.phone,
+                  theme: theme,
                 ),
 
                 const SizedBox(height: AppSpacing.lg),
@@ -53,6 +57,7 @@ class CompleteProfilePage extends StatelessWidget {
                   controller: addressController,
                   keyboardType: TextInputType.streetAddress,
                   maxLines: 3,
+                  theme: theme,
                 ),
 
                 const SizedBox(height: AppSpacing.xl),
@@ -66,9 +71,11 @@ class CompleteProfilePage extends StatelessWidget {
                     final address = addressController.text;
 
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('تم تحديث البيانات بنجاح'),
-                        backgroundColor: AppColors.success,
+                      SnackBar(
+                        content: Text('تم تحديث البيانات بنجاح',
+                            style:
+                                TextStyle(color: theme.colorScheme.onPrimary)),
+                        backgroundColor: theme.colorScheme.primary,
                       ),
                     );
                   },
@@ -86,6 +93,7 @@ class CompleteProfilePage extends StatelessWidget {
     required TextEditingController controller,
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
+    required ThemeData theme,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -97,25 +105,25 @@ class CompleteProfilePage extends StatelessWidget {
           textAlignVertical: TextAlignVertical.center,
           keyboardType: keyboardType,
           maxLines: maxLines,
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 14,
-            color: AppColors.textPrimary,
+            color: theme.colorScheme.onSurface,
           ),
           decoration: AppInputStyles.defaultDecoration(
             label: hint,
           ).copyWith(
             filled: true,
-            fillColor: AppColors.surface,
+            fillColor: theme.colorScheme.surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppRadius.normal),
-              borderSide: const BorderSide(
-                color: AppColors.textSecondary,
+              borderSide: BorderSide(
+                color: theme.colorScheme.onSurface.withOpacity(0.3),
               ),
             ),
-            labelStyle: const TextStyle(
+            labelStyle: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              color: AppColors.textPrimary,
+              color: theme.colorScheme.onSurface,
               fontSize: 12,
             ),
             alignLabelWithHint: true,

@@ -39,8 +39,10 @@ class _OTPPageUIState extends State<OTPPageUI> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final gradient = AppColors.primaryGradient;
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: theme.colorScheme.surface,
       body: SafeArea(
         child: Directionality(
           textDirection: TextDirection.ltr, // Change to LTR
@@ -60,53 +62,64 @@ class _OTPPageUIState extends State<OTPPageUI> {
                 const SizedBox(height: AppSpacing.md),
 
                 // Title
-                const Text(
+                Text(
                   'التحقق من الرمز',
-                  style: AppTextStyles.h2,
+                  style: AppTextStyles.h2
+                      .copyWith(color: theme.colorScheme.onBackground),
                 ),
 
                 const SizedBox(height: AppSpacing.xl),
 
                 // Description
-                const Text(
+                Text(
                   'أدخل الرمز المرسل إلى رقم هاتفك',
-                  style: AppTextStyles.body1,
+                  style: AppTextStyles.body1
+                      .copyWith(color: theme.colorScheme.onBackground),
                   textAlign: TextAlign.center,
                 ),
 
                 const SizedBox(height: AppSpacing.lg),
 
-                // OTP Input Fields
+                // OTP Input Fields with gradient outline
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(6, (index) {
                     return Container(
                       width: 40,
                       margin: const EdgeInsets.symmetric(horizontal: 4),
-                      child: TextField(
-                        controller: _controllers[index],
-                        focusNode: _focusNodes[index],
-                        keyboardType: TextInputType.number,
-                        textAlign: TextAlign.center,
-                        maxLength: 1,
-                        style: const TextStyle(
-                          fontFamily: AppTextStyles.fontFamily,
-                          fontSize: 20,
-                          color: AppColors.textPrimary,
+                      decoration: BoxDecoration(
+                        gradient: gradient,
+                        borderRadius: BorderRadius.circular(AppRadius.normal),
+                      ),
+                      padding: const EdgeInsets.all(1), // border thickness
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surface,
+                          borderRadius: BorderRadius.circular(AppRadius.normal),
                         ),
-                        decoration: InputDecoration(
-                          counterText: '',
-                          filled: true,
-                          fillColor: AppColors.surface,
-                          border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(AppRadius.normal),
-                            borderSide: const BorderSide(
-                              color: AppColors.textSecondary,
+                        child: TextField(
+                          controller: _controllers[index],
+                          focusNode: _focusNodes[index],
+                          keyboardType: TextInputType.number,
+                          textAlign: TextAlign.center,
+                          maxLength: 1,
+                          style: TextStyle(
+                            fontFamily: AppTextStyles.fontFamily,
+                            fontSize: 20,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                          decoration: InputDecoration(
+                            counterText: '',
+                            filled: true,
+                            fillColor: Colors.transparent,
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.circular(AppRadius.normal),
+                              borderSide: BorderSide.none,
                             ),
                           ),
+                          onChanged: (value) => _handleInput(value, index),
                         ),
-                        onChanged: (value) => _handleInput(value, index),
                       ),
                     );
                   }),
@@ -114,9 +127,13 @@ class _OTPPageUIState extends State<OTPPageUI> {
 
                 const SizedBox(height: 80),
 
-                // Verify Button
-                SizedBox(
+                // Verify Button with gradient fill
+                Container(
                   width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: gradient,
+                    borderRadius: BorderRadius.circular(AppRadius.normal),
+                  ),
                   child: ElevatedButton(
                     onPressed: () {
                       // Collect OTP
@@ -131,19 +148,21 @@ class _OTPPageUIState extends State<OTPPageUI> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
                       padding:
                           const EdgeInsets.symmetric(vertical: AppSpacing.md),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppRadius.normal),
                       ),
+                      elevation: 0,
                     ),
-                    child: const Text(
+                    child: Text(
                       'تحقق',
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textOnPrimary,
+                        color: theme.colorScheme.onPrimary,
                         fontSize: 16,
                       ),
                     ),
@@ -159,9 +178,10 @@ class _OTPPageUIState extends State<OTPPageUI> {
                     onPressed: () {
                       // Logic to resend the code
                     },
-                    child: const Text(
+                    child: Text(
                       'إعادة إرسال الرمز؟',
-                      style: AppTextStyles.caption,
+                      style: AppTextStyles.caption
+                          .copyWith(color: theme.colorScheme.onBackground),
                     ),
                   ),
                 ),

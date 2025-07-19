@@ -8,6 +8,7 @@ class CreateAccountPageUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     // Use the centralized primary gradient
     final gradient = AppColors.primaryGradient;
 
@@ -28,21 +29,21 @@ class CreateAccountPageUI extends StatelessWidget {
           keyboardType: keyboardType,
           textAlign: TextAlign.right,
           textAlignVertical: TextAlignVertical.center,
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: AppTextStyles.fontFamily,
             fontSize: 14,
-            color: AppColors.textPrimary,
+            color: theme.colorScheme.onSurface,
           ),
           decoration: AppInputStyles.defaultDecoration(label: label).copyWith(
             filled: true,
-            fillColor: AppColors.surface,
+            fillColor: theme.colorScheme.surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppRadius.normal),
               borderSide: BorderSide.none,
             ),
-            labelStyle: const TextStyle(
+            labelStyle: TextStyle(
               fontFamily: AppTextStyles.fontFamily,
-              color: AppColors.textPrimary,
+              color: theme.colorScheme.onSurface,
               fontSize: 12,
             ),
           ),
@@ -51,12 +52,12 @@ class CreateAccountPageUI extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: theme.colorScheme.surface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -79,7 +80,9 @@ class CreateAccountPageUI extends StatelessWidget {
                 const SizedBox(height: AppSpacing.md),
 
                 // Title
-                const Text('إنشاء حساب', style: AppTextStyles.h2),
+                Text('إنشاء حساب',
+                    style: AppTextStyles.h2
+                        .copyWith(color: theme.colorScheme.onBackground)),
 
                 const SizedBox(height: AppSpacing.xl),
 
@@ -127,12 +130,12 @@ class CreateAccountPageUI extends StatelessWidget {
                         borderRadius: BorderRadius.circular(AppRadius.normal),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'إنشاء حساب',
                       style: TextStyle(
                         fontFamily: AppTextStyles.fontFamily,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textOnPrimary,
+                        color: theme.colorScheme.onPrimary,
                         fontSize: 16,
                       ),
                     ),
@@ -155,11 +158,12 @@ class CreateAccountPageUI extends StatelessWidget {
                         blendMode: BlendMode.srcIn,
                         shaderCallback: (bounds) => gradient.createShader(
                             Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                        child: const Text(
+                        child: Text(
                           'لديك حساب؟ تسجيل الدخول',
                           style: TextStyle(
                               fontFamily: AppTextStyles.fontFamily,
-                              fontSize: 13),
+                              fontSize: 13,
+                              color: theme.colorScheme.onBackground),
                         ),
                       ),
                     ),

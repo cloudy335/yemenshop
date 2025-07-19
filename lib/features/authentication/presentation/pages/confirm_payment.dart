@@ -36,10 +36,6 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
       initialDate: now,
       firstDate: now,
       lastDate: DateTime(now.year + 5),
-      builder: (ctx, child) => Directionality(
-        textDirection: TextDirection.rtl,
-        child: child!,
-      ),
     );
     if (picked != null) {
       final formatted = intl.DateFormat('MM/yy').format(picked);

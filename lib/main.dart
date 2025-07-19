@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:yemenshop/core/theme/design_system.dart';
 import 'package:yemenshop/features/authentication/presentation/bloc/blocs.dart';
 import 'package:yemenshop/features/authentication/presentation/pages/splash_page.dart';
@@ -41,6 +42,16 @@ class MyApp extends StatelessWidget {
           theme: AppThemes.light,
           darkTheme: AppThemes.dark,
           themeMode: themeMode,
+          locale: const Locale('ar'),
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('ar'),
+            Locale('en'),
+          ],
           home: const YemenShopSplashScreen(),
           onGenerateRoute: AppRoutes.generate,
           builder: (context, child) {
